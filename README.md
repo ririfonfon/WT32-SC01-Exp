@@ -5,3 +5,5 @@ Support for Platformio added in this Fork:
 * platformio run
 * platformio run -t upload
  
+ # Note:
+ please let me know if someone has a working example using [lvgl](https://github.com/lvgl) in combination with platformio.
