@@ -6,4 +6,4 @@ Support for Platformio added in this Fork:
 * platformio run -t upload
  
  # Note:
- please let me know if someone has a working example using [lvgl](https://github.com/lvgl) in combination with platformio.
+ please let me know if someone has a working example for the WT32-SC01-Exp using [lvgl](https://github.com/lvgl) in combination with platformio.
