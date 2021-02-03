@@ -11,6 +11,7 @@ Fork of [WT32-SC01-Exp](https://github.com/seaniefs/WT32-SC01-Exp) with platform
 
 
 ## "Arduino_lvgl" Example
+A simple examples to show how to use lvgl with the WT32-SC01. The Arduino Framework and Platform.io as the build environment are used.
 
 Based on the work of several people:
 * WT32-SC01-Exp for the Basis support of TFT und Touchscreen
