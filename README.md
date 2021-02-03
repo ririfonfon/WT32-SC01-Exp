@@ -1,9 +1,20 @@
-# Fork of WT32-SC01-Exp
-Experiment with WT32-SC01 getting touch and rendering to work - not clever, not pretty but works! :)
+# Some Examples for the WT32-SC01 
+The WT32-SC01 is a ESP32 Development board with a 3.5-inch color touch screen
 
-Support for Platformio added in this Fork:
+## Build
+
 * platformio run
 * platformio run -t upload
- 
- # Note:
- please let me know if someone has a working example for the WT32-SC01-Exp using [lvgl](https://github.com/lvgl) in combination with platformio.
+
+## "Arduino" Example
+Fork of [WT32-SC01-Exp](https://github.com/seaniefs/WT32-SC01-Exp) with platformio Support
+
+
+## "Arduino_lvgl" Example
+
+Based on the work of several people:
+* WT32-SC01-Exp for the Basis support of TFT und Touchscreen
+* [Platformio-Example from lvgl](https://github.com/lvgl/lv_platformio)
+* [Example from daumemo.com](https://daumemo.com/how-to-use-lvgl-library-on-arduino-with-an-esp-32-and-spi-lcd/) 
+* Random remakrs about lv_tick_task and the freertos tick hook
+
