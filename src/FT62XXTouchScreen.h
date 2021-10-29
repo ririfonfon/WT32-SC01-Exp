@@ -7,7 +7,7 @@
 
   #define _FT62XXTouchScreen_H_ 1
 
-  #define FT62XX_ADDR (0x38)
+  #define FT62XX_ADDR 0x38            //!< I2C address
   #define FT62XX_REG_MODE 0x00        //!< Device mode, either WORKING or FACTORY
   #define FT62XX_REG_CALIBRATE 0x02   //!< Calibrate mode
   #define FT62XX_REG_WORKMODE 0x00    //!< Work mode
