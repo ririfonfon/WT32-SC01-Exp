@@ -56,7 +56,7 @@ uint16_t lasty = 0;
 
 /*Read the touchpad*/
 bool my_input_read2(lv_indev_drv_t * drv, lv_indev_data_t*data) {
-  Serial.println("#");
+  // Serial.println("#");
   TouchPoint touchPos = touchScreen.read();
   if (touchPos.touched) {
     Serial.println(String(touchPos.xPos) + ": " + String(touchPos.yPos));
@@ -88,7 +88,7 @@ void setup() {
 
   // Enable TFT
   tft.begin();              /* TFT init */
-  tft.setRotation(1);       /* Landscape orientation */
+  tft.setRotation(0);       /* 1 Landscape orientation */
 
   // Enable Backlight
   pinMode(TFT_BL, OUTPUT);
@@ -104,8 +104,10 @@ void setup() {
   // Init Display
   lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
-  disp_drv.hor_res = 480;
-  disp_drv.ver_res = 320;
+  // disp_drv.hor_res = 480;
+  // disp_drv.ver_res = 320;
+  disp_drv.hor_res = 320;
+  disp_drv.ver_res = 480;
   disp_drv.flush_cb = my_disp_flush;
   disp_drv.buffer = &disp_buf;
   lv_disp_drv_register(&disp_drv);
@@ -133,7 +135,7 @@ void setup() {
   lv_obj_set_event_cb(btn1, event_handler_btn);
   lv_obj_set_width(btn1, 70);
   lv_obj_set_height(btn1, 32);
-  lv_obj_set_pos(btn1, 32, 100);
+  lv_obj_set_pos(btn1, 12, 100);
   lv_obj_t * label1 = lv_label_create(btn1, NULL);
   lv_label_set_text(label1, "Hello");
 
@@ -143,7 +145,7 @@ void setup() {
   lv_obj_set_event_cb(btn2, event_handler_btn);
   lv_obj_set_width(btn2, 70);
   lv_obj_set_height(btn2, 32);
-  lv_obj_set_pos(btn2, 142, 100);
+  lv_obj_set_pos(btn2, 122, 100);
   lv_obj_t * label2 = lv_label_create(btn2, NULL);
   lv_label_set_text(label2, "Goodbye");
 
@@ -152,7 +154,7 @@ void setup() {
   lv_obj_set_event_cb(btn3, event_handler_btn);
   lv_obj_set_width(btn3, 70);
   lv_obj_set_height(btn3, 32);
-  lv_obj_set_pos(btn3, 252, 100);
+  lv_obj_set_pos(btn3, 232, 100);
   lv_obj_t * label3 = lv_label_create(btn3, NULL);
   lv_label_set_text(label3, "Riri");
 
@@ -161,7 +163,9 @@ void setup() {
 
 
   // Screen load
-  lv_scr_load(screenMain);
+  // lv_disp_set_bg_color(disp,LV_COLOR_BLACK);
+  lv_scr_load_anim(screenMain,LV_SCR_LOAD_ANIM_MOVE_LEFT,5000,0,true);
+  // lv_scr_load(screenMain);
 }
 
 void loop() {
