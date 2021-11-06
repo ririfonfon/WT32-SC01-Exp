@@ -1,166 +1,20 @@
 /*
+  fonction.h
+  Created by Richard Fontaine, october 2021.
+  Released under GPL v3.0
+*/
 
- Example sketch for TFT_eSPI library.
+#ifndef fonction_h
+#define fonction_h
 
- No fonts are needed.
- 
- Draws a 3d rotating cube on the TFT screen.
- 
- Original code was found at http://forum.freetronics.com/viewtopic.php?f=37&t=5495
- 
- */
+#include <Arduino.h>
 
-#include <Wire.h>
-#include "FT62XXTouchScreen.h"
-
-//
-// Define these in User_Setup.h in the TFT_eSPI
-//
-#define ST7796_DRIVER 1
-#define TFT_WIDTH  480
-#define TFT_HEIGHT 320
-
-#define DISPLAY_WIDTH  480
-#define DISPLAY_HEIGHT 320
-
-#define USE_HSPI_PORT 1
-#define PIN_SDA 18
-#define PIN_SCL 19
-#define TFT_MISO 12
-#define TFT_MOSI 13
-#define TFT_SCLK 14
-#define TFT_CS   15
-#define TFT_DC   21
-#define TFT_RST  22
-#define TFT_BL   23
-
-//#define TOUCH_CS PIN_D2     // Chip select pin (T_CS) of touch screen
-
-#define BLACK 0x0000
-#define WHITE 0xFFFF
-
-#include <SPI.h>
-
-#include <TFT_eSPI.h> // Hardware-specific library
-
-TFT_eSPI tft = TFT_eSPI();       // Invoke custom library
-
-FT62XXTouchScreen touchScreen = FT62XXTouchScreen(DISPLAY_HEIGHT, PIN_SDA, PIN_SCL);
-
-int16_t h;
-int16_t w;
-
-int inc = -2;
-
-float xx, xy, xz;
-float yx, yy, yz;
-float zx, zy, zz;
-
-float fact;
-
-int Xan, Yan;
-
-int Xoff;
-int Yoff;
-int Zoff;
-
-struct Point3d
-{
-  int x;
-  int y;
-  int z;
-};
-
-struct Point2d
-{
-  int x;
-  int y;
-};
-
-int LinestoRender; // lines to render.
-int OldLinestoRender; // lines to render just in case it changes. this makes sure the old lines all get erased.
-
-struct Line3d
-{
-  Point3d p0;
-  Point3d p1;
-};
-
-struct Line2d
-{
-  Point2d p0;
-  Point2d p1;
-};
-
-Line3d Lines[20];
-Line2d Render[20];
-Line2d ORender[20];
-
+void cube(void);
+void SetVars(void);
+void ProcessLine(struct Line2d *ret, struct Line3d vec);
+void RenderImage( void);
 /***********************************************************************************************************************************/
 
-void setup() {
-  Serial.begin(115200);
-  tft.init();
-
-  // Backlight hack...
-  pinMode(TFT_BL, OUTPUT);
-  digitalWrite(TFT_BL, 128);
-
-  touchScreen.begin();
-
-  h = tft.height();
-  w = tft.width();
-
-  tft.setRotation(1);
-
-  tft.fillScreen(TFT_BLACK);
-
-  cube();
-
-  fact = 180 / 3.14159259; // conversion from degrees to radians.
-
-  Xoff = 240; // Position the center of the 3d conversion space into the center of the TFT screen.
-  Yoff = 160;
-  Zoff = 550; // Z offset in 3D space (smaller = closer and bigger rendering)
-}
-
-/***********************************************************************************************************************************/
-void loop() {
-
-  TouchPoint touchPos = touchScreen.read();
-
-  if (touchPos.touched) {
-    Serial.printf("X: %d, Y: %d\n", touchPos.xPos, touchPos.yPos);
-    tft.drawCircle(touchPos.xPos, touchPos.yPos
-    , 10, TFT_SILVER);
-  }
-
-  // Rotate around x and y axes in 1 degree increments
-  Xan++;
-  Yan++;
-
-  Yan = Yan % 360;
-  Xan = Xan % 360; // prevents overflow.
-
-  SetVars(); //sets up the global vars to do the 3D conversion.
-
-  // Zoom in and out on Z axis within limits
-  // the cube intersects with the screen for values < 160
-  Zoff += inc; 
-  if (Zoff > 500) inc = -1;     // Switch to zoom in
-  else if (Zoff < 160) inc = 1; // Switch to zoom out
-
-  for (int i = 0; i < LinestoRender ; i++)
-  {
-    ORender[i] = Render[i]; // stores the old line segment so we can delete it later.
-    ProcessLine(&Render[i], Lines[i]); // converts the 3d line segments to 2d.
-  }
-  RenderImage(); // go draw it!
-
-  delay(20); // Delay to reduce loop rate (reduces flicker caused by aliasing with TFT screen refresh rate)
-}
-
-/***********************************************************************************************************************************/
 void RenderImage( void)
 {
   // renders all the lines after erasing the old ones.
@@ -187,8 +41,8 @@ void RenderImage( void)
 // only needs to be called if Xan or Yan are changed.
 void SetVars(void)
 {
-  float Xan2, Yan2, Zan2;
-  float s1, s2, s3, c1, c2, c3;
+  float Xan2, Yan2;
+  float s1, s2, c1, c2;
 
   Xan2 = Xan / fact; // convert degrees to radians.
   Yan2 = Yan / fact;
@@ -389,3 +243,4 @@ void cube(void)
 
 }
 
+#endif
