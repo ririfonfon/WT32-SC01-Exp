@@ -7,6 +7,7 @@
 
   #define _FT62XXTouchScreen_H_ 1
 
+  #define FT62XX_ROT 1                //!< 0 Landscape 1 Portrait
   #define FT62XX_ADDR 0x38            //!< I2C address
   #define FT62XX_REG_MODE 0x00        //!< Device mode, either WORKING or FACTORY
   #define FT62XX_REG_CALIBRATE 0x02   //!< Calibrate mode
@@ -116,13 +117,22 @@
             Serial.println(i2cdat[0x01]);
           }
         #endif
-  
+
+        #if FT62XX_ROT
+        uint16_t touchX = i2cdat[0x03] & 0x0F;
+        touchX <<= 8;
+        touchX |= i2cdat[0x04];
+        uint16_t touchY = i2cdat[0x05] & 0x0F;
+        touchY <<= 8;
+        touchY |= i2cdat[0x06];
+        #else  
         uint16_t touchY = i2cdat[0x03] & 0x0F;
         touchY <<= 8;
         touchY |= i2cdat[0x04];
         uint16_t touchX = i2cdat[0x05] & 0x0F;
         touchX <<= 8;
         touchX |= i2cdat[0x06];
+        #endif
       
         #ifdef TOUCHSCREEN_DEBUG
           Serial.println();
