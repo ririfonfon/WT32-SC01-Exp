@@ -7,7 +7,7 @@
 #include <TFT_eSPI.h> 
 #include "FT62XXTouchScreen.h"
 
-TFT_eSPI tft = TFT_eSPI();
+TFT_eSPI tft = TFT_eSPI(); /* TFT instance */
 FT62XXTouchScreen touchScreen = FT62XXTouchScreen(TFT_WIDTH, PIN_SDA, PIN_SCL);
 
 
@@ -19,8 +19,10 @@ static lv_color_t buf[LV_HOR_RES_MAX * 10];
 
 lv_obj_t *btn1;
 lv_obj_t *btn2;
+lv_obj_t *btn3;
 lv_obj_t *screenMain;
 lv_obj_t *label;
+lv_bar_anim_t *fader;
 
 static void event_handler_btn(lv_obj_t * obj, lv_event_t event){
     if(event == LV_EVENT_CLICKED) {
@@ -29,9 +31,13 @@ static void event_handler_btn(lv_obj_t * obj, lv_event_t event){
         else if (obj == btn2){
           lv_label_set_text(label, "Goodbye");
         }
+        else if (obj == btn3){
+          lv_label_set_text(label, "Riri");
+        }
     }
 }
 
+/* Display flushing */
 void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color_p)
 {
     uint32_t w = (area->x2 - area->x1 + 1);
@@ -48,6 +54,7 @@ void my_disp_flush(lv_disp_drv_t *disp, const lv_area_t *area, lv_color_t *color
 uint16_t lastx = 0;
 uint16_t lasty = 0;
 
+/*Read the touchpad*/
 bool my_input_read2(lv_indev_drv_t * drv, lv_indev_data_t*data) {
   Serial.println("#");
   TouchPoint touchPos = touchScreen.read();
@@ -66,14 +73,13 @@ bool my_input_read2(lv_indev_drv_t * drv, lv_indev_data_t*data) {
   }
   return false;
 }
+
 static void lv_tick_task(void)
 {
  lv_tick_inc(portTICK_RATE_MS);
 }
 
 void setup() {
-  lv_disp_drv_t disp_drv;
-  lv_indev_drv_t indev_drv;
 
   Serial.begin(115200);
   lv_init();
@@ -81,8 +87,8 @@ void setup() {
   esp_err_t err = esp_register_freertos_tick_hook((esp_freertos_tick_cb_t)lv_tick_task); 
 
   // Enable TFT
-  tft.begin();
-  tft.setRotation(1);
+  tft.begin();              /* TFT init */
+  tft.setRotation(1);       /* Landscape orientation */
 
   // Enable Backlight
   pinMode(TFT_BL, OUTPUT);
@@ -96,6 +102,7 @@ void setup() {
   lv_disp_buf_init(&disp_buf, buf, NULL, LV_HOR_RES_MAX * 10);
 
   // Init Display
+  lv_disp_drv_t disp_drv;
   lv_disp_drv_init(&disp_drv);
   disp_drv.hor_res = 480;
   disp_drv.ver_res = 320;
@@ -104,6 +111,7 @@ void setup() {
   lv_disp_drv_register(&disp_drv);
 
   // Init Touchscreen
+  lv_indev_drv_t indev_drv;
   lv_indev_drv_init(&indev_drv);
   indev_drv.type = LV_INDEV_TYPE_POINTER;
   indev_drv.read_cb = my_input_read2;
@@ -118,7 +126,7 @@ void setup() {
   lv_label_set_text(label, "Press a button");
   lv_label_set_align(label, LV_LABEL_ALIGN_CENTER);
   lv_obj_set_size(label, 240, 40);
-  lv_obj_set_pos(label, 0, 15);
+  lv_obj_set_pos(label, 0, 30);
 
   // BUtton 1
   btn1 = lv_btn_create(screenMain, NULL);
@@ -138,6 +146,19 @@ void setup() {
   lv_obj_set_pos(btn2, 142, 100);
   lv_obj_t * label2 = lv_label_create(btn2, NULL);
   lv_label_set_text(label2, "Goodbye");
+
+  // Button 3
+  btn3 = lv_btn_create(screenMain, NULL);
+  lv_obj_set_event_cb(btn3, event_handler_btn);
+  lv_obj_set_width(btn3, 70);
+  lv_obj_set_height(btn3, 32);
+  lv_obj_set_pos(btn3, 252, 100);
+  lv_obj_t * label3 = lv_label_create(btn3, NULL);
+  lv_label_set_text(label3, "Riri");
+
+  // fader
+  // fader = lv_bar_create(screenMain, NULL);
+
 
   // Screen load
   lv_scr_load(screenMain);
