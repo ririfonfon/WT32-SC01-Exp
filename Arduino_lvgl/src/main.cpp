@@ -181,7 +181,13 @@ void setup()
   lv_obj_set_pos(label4, 100, 8);
 
   // Screen load
-  // lv_disp_set_bg_color(disp,LV_COLOR_BLACK);
+  
+  static lv_style_t blue_bg_style;
+   lv_style_init(&blue_bg_style);
+   lv_style_set_bg_color(&blue_bg_style, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x00, 0x00, 0x40));
+   lv_obj_add_style(lv_scr_act(), LV_OBJ_PART_MAIN, &blue_bg_style);
+
+  // lv_disp_set_bg_color(NULL,LV_COLOR_BLACK);
   // lv_scr_load_anim(screenMain,LV_SCR_LOAD_ANIM_MOVE_LEFT,5000,0,true);
   lv_scr_load(screenMain);
 }
