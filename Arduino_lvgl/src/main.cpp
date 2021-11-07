@@ -22,7 +22,7 @@ lv_obj_t *btn2;
 lv_obj_t *btn3;
 lv_obj_t *screenMain;
 lv_obj_t *label;
-lv_bar_anim_t *fader;
+lv_obj_t *slider;
 
 static void event_handler_btn(lv_obj_t * obj, lv_event_t event){
     if(event == LV_EVENT_CLICKED) {
@@ -158,14 +158,21 @@ void setup() {
   lv_obj_t * label3 = lv_label_create(btn3, NULL);
   lv_label_set_text(label3, "Riri");
 
-  // fader
-  // fader = lv_bar_create(screenMain, NULL);
-
+  // slider
+  slider = lv_slider_create(screenMain, NULL);
+  // lv_obj_set_event_cb(slider, event_handler_btn);
+  // lv_obj_set_width(slider, 70);
+  // lv_obj_set_height(slider, 32);
+  lv_slider_set_range(slider, 0, 10);
+  lv_slider_set_type(slider,LV_SLIDER_TYPE_RANGE);
+  lv_obj_set_pos(slider, 30, 200);
+  // lv_obj_t * label4 = lv_label_create(slider, NULL);
+  // lv_label_set_text(label4, "Slider");
 
   // Screen load
   // lv_disp_set_bg_color(disp,LV_COLOR_BLACK);
-  lv_scr_load_anim(screenMain,LV_SCR_LOAD_ANIM_MOVE_LEFT,5000,0,true);
-  // lv_scr_load(screenMain);
+  // lv_scr_load_anim(screenMain,LV_SCR_LOAD_ANIM_MOVE_LEFT,5000,0,true);
+  lv_scr_load(screenMain);
 }
 
 void loop() {
