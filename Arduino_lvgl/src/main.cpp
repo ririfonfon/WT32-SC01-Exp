@@ -21,6 +21,7 @@ lv_obj_t *btn3;
 lv_obj_t *screenMain;
 lv_obj_t *label;
 lv_obj_t *slider;
+lv_obj_t *sw;
 
 static void event_handler_btn(lv_obj_t *obj, lv_event_t event)
 {
@@ -180,14 +181,19 @@ void setup()
   lv_label_set_text(label4, "Slider");
   lv_obj_set_pos(label4, 100, 8);
 
-  // Screen load
-  
-  static lv_style_t blue_bg_style;
-   lv_style_init(&blue_bg_style);
-   lv_style_set_bg_color(&blue_bg_style, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x00, 0x00, 0x40));
-   lv_obj_add_style(lv_scr_act(), LV_OBJ_PART_MAIN, &blue_bg_style);
+  // switch
+  sw = lv_switch_create(screenMain, NULL);
+  lv_obj_set_pos(sw,20,250);
+  lv_obj_set_width(sw, 70);
+  lv_obj_set_height(sw, 32);
 
-  // lv_disp_set_bg_color(NULL,LV_COLOR_BLACK);
+  // Screen load
+  static lv_style_t blue_bg_style;
+  lv_style_init(&blue_bg_style);
+  lv_style_set_bg_color(&blue_bg_style, LV_STATE_DEFAULT, LV_COLOR_MAKE(0x00, 0x00, 0x40));
+  lv_obj_add_style(lv_scr_act(), LV_OBJ_PART_MAIN, &blue_bg_style);
+
+  // lv_disp_set_bg_color(NULL,LV_COLOR_BLACK);// don't work ?
   // lv_scr_load_anim(screenMain,LV_SCR_LOAD_ANIM_MOVE_LEFT,5000,0,true);
   lv_scr_load(screenMain);
 }
