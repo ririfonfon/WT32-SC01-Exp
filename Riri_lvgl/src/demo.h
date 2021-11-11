@@ -175,7 +175,7 @@ static void text_area_event_handler(lv_obj_t *text_area, lv_event_t event)
             lv_obj_add_style(kb, LV_KEYBOARD_PART_BTN, &style_kb);
             lv_obj_set_event_cb(kb, keyboard_event_cb);
 
-            lv_keyboard_set_mode(kb,4);
+            lv_keyboard_set_mode(kb,5);
 
             lv_anim_t a;
             lv_anim_init(&a);
