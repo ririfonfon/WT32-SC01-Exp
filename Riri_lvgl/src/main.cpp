@@ -21,7 +21,7 @@ void setup()
   tft_init();
 
   // lv_keypad_encoder();
-  remote_create();
+  menu_create();
 }
 
 void loop()

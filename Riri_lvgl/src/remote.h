@@ -14,7 +14,7 @@
 // /**********************
 //  *  STATIC PROTOTYPES
 //  **********************/
-static void write_create(lv_obj_t *parent);
+static void remote_create(lv_obj_t *parent);
 static void text_area_event_handler(lv_obj_t *text_area, lv_event_t event);
 static void keyboard_event_cb(lv_obj_t *keyboard, lv_event_t event);
 static void keyboard_create(lv_obj_t *parent);
@@ -23,14 +23,10 @@ static void keyboard_create(lv_obj_t *parent);
 static void kb_hide_anim_end(lv_anim_t *a);
 #endif
 
-static void list_create(lv_obj_t *parent);
-static void chart_create(lv_obj_t *parent);
+static void option_create(lv_obj_t *parent);
+static void output_create(lv_obj_t *parent);
 static void slider_event_handler(lv_obj_t *slider, lv_event_t event);
 static void list_btn_event_handler(lv_obj_t *slider, lv_event_t event);
-
-#if LV_DEMO_SLIDE_SHOW
-static void tab_switcher(lv_task_t *task);
-#endif
 
 // /**********************
 //  *  STATIC VARIABLES
@@ -40,10 +36,6 @@ static lv_obj_t *ta;
 static lv_obj_t *kb;
 
 static lv_style_t style_kb;
-
-#if LV_DEMO_WALLPAPER
-LV_IMG_DECLARE(img_bubble_pattern)
-#endif
 
 // /**********************
 //  *      MACROS
@@ -56,17 +48,10 @@ LV_IMG_DECLARE(img_bubble_pattern)
 /**
  * Create a remote application
  */
-void remote_create(void)
+void menu_create(void)
 {
     lv_coord_t hres = lv_disp_get_hor_res(NULL);
     lv_coord_t vres = lv_disp_get_ver_res(NULL);
-
-#if LV_DEMO_WALLPAPER
-    lv_obj_t *wp = lv_img_create(lv_disp_get_scr_act(NULL), NULL);
-    lv_img_set_src(wp, &img_bubble_pattern);
-    lv_obj_set_width(wp, hres * 4);
-    lv_obj_add_protect(wp, LV_PROTECT_POS);
-#endif
 
     static lv_style_t style_tv_btn;
     lv_style_init(&style_tv_btn);
@@ -75,7 +60,7 @@ void remote_create(void)
     lv_style_set_bg_grad_color(&style_tv_btn, LV_STATE_DEFAULT, lv_color_hex3(0x333));
 
     lv_style_set_pad_top(&style_tv_btn, LV_STATE_DEFAULT, 0);
-    lv_style_set_pad_bottom(&style_tv_btn, LV_STATE_DEFAULT, 0);
+    lv_style_set_pad_bottom(&style_tv_btn, LV_STATE_DEFAULT, 20);
     lv_style_set_bg_opa(&style_tv_btn, LV_BTN_STATE_RELEASED, LV_OPA_70);
     lv_style_set_border_width(&style_tv_btn, LV_BTN_STATE_RELEASED, 0);
     lv_style_set_radius(&style_tv_btn, LV_BTN_STATE_PRESSED, 0);
@@ -88,36 +73,23 @@ void remote_create(void)
     lv_obj_t *tv = lv_tabview_create(lv_scr_act(), NULL);
     lv_obj_set_size(tv, hres, vres);
 
-#if LV_DEMO_WALLPAPER
-    lv_obj_set_parent(wp, ((lv_tabview_ext_t *)tv->ext_attr)->content);
-    lv_obj_set_pos(wp, 0, -5);
-#endif
-
     lv_obj_t *tab1 = lv_tabview_add_tab(tv, "Remote");
     lv_obj_t *tab2 = lv_tabview_add_tab(tv, "Option");
     lv_obj_t *tab3 = lv_tabview_add_tab(tv, "Output");
 
-#if LV_DEMO_WALLPAPER == 0
-    /*Blue bg instead of wallpaper*/
-    // lv_tabview_set_style(tv, LV_TABVIEW_STYLE_BG, &style_tv_btn_bg);
-#endif
-
     lv_obj_add_style(tv, LV_TABVIEW_PART_TAB_BTN, &style_tv_btn);
 
-    write_create(tab1);
-    list_create(tab2);
-    chart_create(tab3);
+    remote_create(tab1);
+    option_create(tab2);
+    output_create(tab3);
 
-#if LV_DEMO_SLIDE_SHOW
-    lv_task_create(tab_switcher, 3000, LV_TASK_PRIO_MID, tv);
-#endif
 }
 
 /**********************
  *   STATIC FUNCTIONS
  **********************/
 
-static void write_create(lv_obj_t *parent)
+static void remote_create(lv_obj_t *parent)
 {
     // lv_page_set_style(parent, LV_PAGE_STYLE_BG, &lv_style_transp_fit);
     // lv_page_set_style(parent, LV_PAGE_STYLE_SCRL, &lv_style_transp_fit);
@@ -229,14 +201,16 @@ static void keyboard_event_cb(lv_obj_t *keyboard, lv_event_t event)
     }
 }
 
-static void list_create(lv_obj_t *parent)
+static void option_create(lv_obj_t *parent)
 {
     lv_coord_t hres = lv_disp_get_hor_res(NULL);
 
     static lv_style_t style_page;
     lv_style_init(&style_page);
+    lv_style_set_bg_color(&style_page, LV_STATE_DEFAULT, lv_color_hex3(0x333));
+    lv_style_set_bg_grad_color(&style_page, LV_STATE_DEFAULT, lv_color_hex3(0x333));
 
-    lv_style_set_bg_opa(&style_page, LV_STATE_DEFAULT, LV_OPA_100);
+    lv_style_set_bg_opa(&style_page, LV_STATE_DEFAULT, LV_OPA_70);
     lv_style_set_pad_top(&style_page, LV_STATE_DEFAULT, 0);
     lv_style_set_pad_bottom(&style_page, LV_STATE_DEFAULT, 0);
     lv_style_set_pad_left(&style_page, LV_STATE_DEFAULT, 5);
@@ -252,10 +226,10 @@ static void list_create(lv_obj_t *parent)
     lv_style_init(&style_btn);
 
     lv_style_set_bg_color(&style_btn, LV_BTN_STATE_RELEASED, lv_color_hex3(0x333));
-    lv_style_set_bg_grad_color(&style_btn, LV_BTN_STATE_RELEASED, LV_COLOR_BLACK);
+    lv_style_set_bg_grad_color(&style_btn, LV_BTN_STATE_RELEASED, lv_color_hex3(0x333));
     lv_style_set_border_color(&style_btn, LV_BTN_STATE_RELEASED, LV_COLOR_SILVER);
     lv_style_set_border_width(&style_btn, LV_BTN_STATE_RELEASED, 1);
-    lv_style_set_border_opa(&style_btn, LV_BTN_STATE_RELEASED, LV_OPA_50);
+    lv_style_set_border_opa(&style_btn, LV_BTN_STATE_RELEASED, LV_OPA_70);
     lv_style_set_radius(&style_btn, LV_BTN_STATE_RELEASED, 0);
 
     lv_style_set_bg_color(&style_btn, LV_BTN_STATE_PRESSED, lv_color_make(0x55, 0x96, 0xd8));
@@ -267,6 +241,9 @@ static void list_create(lv_obj_t *parent)
 
     static lv_style_t style_list;
     lv_style_init(&style_list);
+    // lv_style_set_bg_color(&style_list, LV_STATE_DEFAULT, lv_color_hex3(0x333));
+    // lv_style_set_bg_grad_color(&style_list, LV_STATE_DEFAULT, lv_color_hex3(0x333));
+    // lv_style_set_bg_opa(&style_list, LV_STATE_DEFAULT, LV_OPA_70);
     lv_style_set_bg_opa(&style_list, LV_STATE_DEFAULT, LV_OPA_100);
     lv_style_set_pad_left(&style_list, LV_STATE_DEFAULT, 0);
     lv_style_set_pad_right(&style_list, LV_STATE_DEFAULT, 0);
@@ -308,23 +285,17 @@ static void list_create(lv_obj_t *parent)
     lv_obj_align(mbox, parent, LV_ALIGN_IN_TOP_MID, 0, LV_DPI / 2);
 }
 
-// #if LV_USE_ANIMATION
-// static void kb_hide_anim_end(lv_anim_t * a)
-// {
-//     lv_obj_del(a->var);
-//     kb = NULL;
-// }
-// #endif
-
-static void chart_create(lv_obj_t *parent)
+static void output_create(lv_obj_t *parent)
 {
 
     lv_coord_t vres = lv_disp_get_ver_res(NULL);
 
     static lv_style_t style_page;
     lv_style_init(&style_page);
+    lv_style_set_bg_color(&style_page, LV_STATE_DEFAULT, lv_color_hex3(0x333));
+    lv_style_set_bg_grad_color(&style_page, LV_STATE_DEFAULT, lv_color_hex3(0x333));
 
-    lv_style_set_bg_opa(&style_page, LV_STATE_DEFAULT, LV_OPA_100);
+    lv_style_set_bg_opa(&style_page, LV_STATE_DEFAULT, LV_OPA_70);
     lv_style_set_pad_top(&style_page, LV_STATE_DEFAULT, 0);
     lv_style_set_pad_bottom(&style_page, LV_STATE_DEFAULT, 0);
     lv_style_set_pad_left(&style_page, LV_STATE_DEFAULT, 5);
@@ -361,7 +332,7 @@ static void chart_create(lv_obj_t *parent)
     lv_chart_set_next(chart, ser1, 55);
     lv_chart_set_next(chart, ser1, 70);
     lv_chart_set_next(chart, ser1, 82);
-    lv_chart_set_next(chart, ser1, 91);
+    lv_chart_set_next(chart, ser1, 100);
 
     /*Create a bar, an indicator and a knob style*/
     static lv_style_t style_bar;
@@ -437,20 +408,5 @@ static void list_btn_event_handler(lv_obj_t *btn, lv_event_t event)
         lv_textarea_add_text(ta, lv_list_get_btn_text(btn));
     }
 }
-
-#if LV_DEMO_SLIDE_SHOW
-/**
- * Called periodically (lv_task) to switch to the next tab
- */
-static void tab_switcher(lv_task_t *task)
-{
-    static uint8_t tab = 0;
-    lv_obj_t *tv = task->user_data;
-    tab++;
-    if (tab >= 3)
-        tab = 0;
-    lv_tabview_set_tab_act(tv, tab, true);
-}
-#endif
 
 #endif
