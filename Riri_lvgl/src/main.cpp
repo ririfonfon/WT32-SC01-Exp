@@ -2,7 +2,7 @@
 
 #include "init.h"
 #include "keypad.h"
-#include "demo.h"
+#include "remote.h"
 
 static void lv_tick_task(void)
 {
@@ -21,7 +21,7 @@ void setup()
   tft_init();
 
   // lv_keypad_encoder();
-  demo_create();
+  remote_create();
 }
 
 void loop()
