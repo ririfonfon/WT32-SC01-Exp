@@ -41,7 +41,7 @@ bool my_input_read2(lv_indev_drv_t *drv, lv_indev_data_t *data)
   TouchPoint touchPos = touchScreen.read();
   if (touchPos.touched)
   {
-    Serial.println(String(touchPos.xPos) + ": " + String(touchPos.yPos));
+    // Serial.println(" *** " + String(touchPos.xPos) + " : " + String(touchPos.yPos)); // debug x  y
     data->state = LV_INDEV_STATE_PR;
     data->point.x = touchPos.xPos;
     data->point.y = touchPos.yPos;
