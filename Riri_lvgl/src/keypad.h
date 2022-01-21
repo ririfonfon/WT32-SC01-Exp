@@ -1,5 +1,5 @@
 #ifndef keypad_h
-#define key_pad_h
+#define keypad_h
 
 #include "lvgl.h"
 
