@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "lv_conf_internal.h": "c",
+        "lv_conf_kconfig.h": "c",
+        "lv_obj.h": "c"
+    }
+}
