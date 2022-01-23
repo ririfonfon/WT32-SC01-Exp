@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "init.h"
-#include "keypad.h"
+// #include "keypad.h"
 #include "remote.h"
 
 static void lv_tick_task(void)
