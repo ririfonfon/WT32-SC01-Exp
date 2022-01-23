@@ -186,15 +186,15 @@ static void keyboard_event_cb(lv_obj_t *keyboard, lv_event_t event)
 {
     (void)keyboard; /*Unused*/
 
+    const char * txt = lv_btnmatrix_get_active_btn_text(kb);
+    Serial.println(" *** txt : " + String(txt)); // debug keyboard
+
+    uint8_t mode = lv_keyboard_get_mode(kb);
+    Serial.println(" *** mode : " + String(mode)); // debug keyboard
+    
     lv_keyboard_def_event_cb(kb, event);
 
-    Serial.println(" *** event : " + String(event)); // debug keyboard
-
-    if (event == 0)
-    {
-        Serial.println(" 00000000000 event : Time " ); // debug keyboard
-    }
-    else if (event == LV_EVENT_APPLY || event == LV_EVENT_CANCEL)
+    if (event == LV_EVENT_APPLY || event == LV_EVENT_CANCEL)
     {
         lv_anim_t a;
         lv_anim_init(&a);
