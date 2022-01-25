@@ -78,14 +78,14 @@ void menu_create(void)
     lv_obj_set_size(tv, hres, vres);
 
     lv_obj_t *tab1 = lv_tabview_add_tab(tv, "Remote");
-    lv_obj_t *tab2 = lv_tabview_add_tab(tv, "Option");
-    lv_obj_t *tab3 = lv_tabview_add_tab(tv, "Output");
+    // lv_obj_t *tab2 = lv_tabview_add_tab(tv, "Option");
+    // lv_obj_t *tab3 = lv_tabview_add_tab(tv, "Output");
 
     lv_obj_add_style(tv, LV_TABVIEW_PART_TAB_BTN, &style_tv_btn);
 
     remote_create(tab1);
-    option_create(tab2);
-    output_create(tab3);
+    // option_create(tab2);
+    // output_create(tab3);
 
 }
 
