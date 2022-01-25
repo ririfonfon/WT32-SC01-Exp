@@ -4,9 +4,16 @@
 // #include "keypad.h"
 #include "remote.h"
 
+char action[256];
+
 static void lv_tick_task(void)
 {
   lv_tick_inc(portTICK_RATE_MS);
+}
+
+void do_oops() 
+{
+  Serial.println("oops");
 }
 
 void setup()
@@ -28,4 +35,15 @@ void loop()
 {
   lv_task_handler();
   delay(1);
+
+  getAction(action);
+  if (strcmp(action, "") != 0) {
+
+    Serial.println(action);
+
+    if (strcmp(action, "Please") == 0)          Serial.println("\t->Thanks!");
+    if (strcmp(action, LV_SYMBOL_RIGHT) == 0)   Serial.println("\t->Right");
+    if (strcmp(action, LV_SYMBOL_LEFT) == 0)    Serial.println("\t->Left");
+  }
+
 }

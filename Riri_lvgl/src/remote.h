@@ -37,6 +37,10 @@ static lv_obj_t *kb;
 
 static lv_style_t style_kb;
 
+void getAction(char* action) {
+    lv_keyboard_get_lastTxt(kb, action);
+}
+
 // /**********************
 //  *      MACROS
 //  **********************/
@@ -74,14 +78,14 @@ void menu_create(void)
     lv_obj_set_size(tv, hres, vres);
 
     lv_obj_t *tab1 = lv_tabview_add_tab(tv, "Remote");
-    // lv_obj_t *tab2 = lv_tabview_add_tab(tv, "Option"); 
-    // lv_obj_t *tab3 = lv_tabview_add_tab(tv, "Output");
+    lv_obj_t *tab2 = lv_tabview_add_tab(tv, "Option");
+    lv_obj_t *tab3 = lv_tabview_add_tab(tv, "Output");
 
     lv_obj_add_style(tv, LV_TABVIEW_PART_TAB_BTN, &style_tv_btn);
 
     remote_create(tab1);
-    // option_create(tab2);
-    // output_create(tab3);
+    option_create(tab2);
+    output_create(tab3);
 
 }
 
@@ -186,12 +190,6 @@ static void keyboard_event_cb(lv_obj_t *keyboard, lv_event_t event)
 {
     (void)keyboard; /*Unused*/
 
-    const char * txt = lv_btnmatrix_get_active_btn_text(kb);
-    Serial.println(" *** txt : " + String(txt)); // debug keyboard
-
-    uint8_t mode = lv_keyboard_get_mode(kb);
-    Serial.println(" *** mode : " + String(mode)); // debug keyboard
-    
     lv_keyboard_def_event_cb(kb, event);
 
     if (event == LV_EVENT_APPLY || event == LV_EVENT_CANCEL)
