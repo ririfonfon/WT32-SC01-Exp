@@ -21,6 +21,9 @@ void setup()
   // Enable TFT & Tactile
   tft_init();
 
+  // varaiable
+  init_variable();
+
   // lv_keypad_encoder();
   menu_create();
 }
@@ -29,4 +32,6 @@ void loop()
 {
   lv_task_handler();
   delay(1);
+
+  fonction();
 }
