@@ -107,6 +107,7 @@ static void remote_create(lv_obj_t *parent)
     lv_style_set_bg_grad_color(&style_ta, LV_STATE_DEFAULT, lv_color_hex3(0x333));
     lv_style_set_radius(&style_ta, LV_STATE_DEFAULT, 0);
     lv_style_set_text_color(&style_ta, LV_STATE_DEFAULT, LV_COLOR_WHITE);
+    lv_style_set_text_color(&style_ta, LV_STATE_FOCUSED, LV_COLOR_RED);
 
     ta = lv_textarea_create(parent, NULL);
 
