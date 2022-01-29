@@ -17,7 +17,7 @@ int8_t fonction_call;
 int8_t old_fonction_call;
 
 bool select[513];
-uint8_t output[512];
+uint8_t output[513];
 
 void init_variable();
 void key(uint8_t key_value);
@@ -26,7 +26,10 @@ void fonction();
 void init_variable()
 {
   for (int i = 0; i <= 513; i++)
+  {
     select[i] = false;
+    output[i] = 0;
+  }
 
   c_i_1 = 0;
   c_i_2 = 0;
@@ -371,6 +374,7 @@ void key(uint8_t key_value)
   {
     Serial.println(" list ch ");
     lv_textarea_add_char(ta, '\n');
+    lv_textarea_add_char(ta, '\n');
     c_i_1 = 0;
     c_i_2 = 0;
     ch_input_1 = 0;
@@ -398,6 +402,7 @@ void key(uint8_t key_value)
   {
     Serial.println(" send ch ");
     lv_textarea_add_char(ta, '\n');
+    lv_textarea_add_char(ta, '\n');
     c_i_1 = 0;
     c_i_2 = 0;
     ch_input_1 = 0;
@@ -409,6 +414,8 @@ void key(uint8_t key_value)
     {
       if (select[i])
       {
+        output[i] = dim_input_3;
+
         char ch[3];
         sprintf(ch, "%d", i);
         lv_textarea_add_char(ta, ch[0]);
@@ -432,6 +439,9 @@ void key(uint8_t key_value)
     d_i_3 = 0;
     dim_input_3 = 0;
     Serial.println(" to do send dmx ");
+    lv_textarea_add_char(ta, '\n');
+    lv_textarea_add_char(ta, '\n');
+    lv_textarea_add_text(ta, " Ch : ");
   }
 
   Serial.print(" ch 1 : ");
