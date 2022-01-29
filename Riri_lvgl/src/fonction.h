@@ -13,10 +13,10 @@ uint8_t d_i_3;
 uint16_t dim_input_3;
 uint8_t char_input_3[2];
 
-int8_t fon;
-int8_t old_fon;
+int8_t fonction_call;
+int8_t old_fonction_call;
 
-bool select[512];
+bool select[513];
 uint8_t output[512];
 
 void init_variable();
@@ -25,7 +25,7 @@ void fonction();
 
 void init_variable()
 {
-  for (int i = 0; i <= 512; i++)
+  for (int i = 0; i <= 513; i++)
     select[i] = false;
 
   c_i_1 = 0;
@@ -33,8 +33,8 @@ void init_variable()
   ch_input_1 = 0;
   ch_input_2 = 0;
   dim_input_3 = 0;
-  fon = 0;
-  old_fon = 0;
+  fonction_call = 0;
+  old_fonction_call = 0;
 }
 
 void fonction()
@@ -96,35 +96,43 @@ void fonction()
     }
     else if (strcmp(action, "+") == 0)
     {
-      fon = 0;
+      fonction_call = 0;
       lv_textarea_add_text(ta, " + ");
       key(10);
       Serial.println("\t->+");
     }
     else if (strcmp(action, "-") == 0)
     {
-      fon = -1;
+      fonction_call = -1;
       lv_textarea_add_text(ta, " - ");
       key(11);
       Serial.println("\t->-");
     }
     else if (strcmp(action, "Thru") == 0)
     {
-      fon = 1;
+      fonction_call = 1;
+      if (old_fonction_call == -1)
+      {
+        fonction_call = 4;
+      }
       lv_textarea_add_text(ta, " Thru ");
       key(12);
       Serial.println("\t->Thru");
     }
     else if (strcmp(action, "At") == 0)
     {
-      fon = 2;
+      fonction_call = 2;
       lv_textarea_add_text(ta, " At ");
       key(13);
       Serial.println("\t->At");
     }
     else if (strcmp(action, "Please") == 0)
     {
-      fon = 3;
+      fonction_call = 3;
+      if (old_fonction_call == 2)
+      {
+        fonction_call = 5;
+      }
       lv_textarea_add_text(ta, " Please ");
       key(14);
       Serial.println("\t->Thanks!");
@@ -143,8 +151,9 @@ void key(uint8_t key_value)
 {
   if ((key_value >= 0) && (key_value <= 9))
   {
-    if (fon < 1)
+    if (fonction_call < 1)
     {
+      Serial.println(" if (fonction_call < 1) ");
       if (c_i_1 == 0)
       {
         char_input_1[0] = key_value;
@@ -171,8 +180,9 @@ void key(uint8_t key_value)
         ch_input_1 = 0;
       }
     }
-    else if (fon == 1)
+    else if (fonction_call == 1 || fonction_call == 4)
     {
+      Serial.println(" else if (fonction_call == 1 || fonction_call == 4) ");
       if (c_i_2 == 0)
       {
         char_input_2[0] = key_value;
@@ -199,8 +209,9 @@ void key(uint8_t key_value)
         ch_input_2 = 0;
       }
     }
-    else if (fon == 2)
+    else if (fonction_call == 2)
     {
+      Serial.println(" else if (fonction_call == 2) ");
       if (d_i_3 == 0)
       {
         char_input_3[0] = key_value;
@@ -230,10 +241,11 @@ void key(uint8_t key_value)
     lv_textarea_add_text(ta, action);
   }
 
-  else if ((key_value == 10) && (key_value <= 11) || (key_value == 14))
+  else if ((key_value == 10) || (key_value == 11) || (key_value == 13) || (key_value == 14))
   {
-    if (old_fon == 0)
+    if (old_fonction_call == 0 && fonction_call != 2)
     {
+      Serial.println(" if (old_fonction_call == 0 && fonction_call != 2) ");
       if (ch_input_1 <= 512)
       {
         Serial.println(" +++++++ ch +++++++++ ");
@@ -243,14 +255,15 @@ void key(uint8_t key_value)
       }
       else if (ch_input_1 > 512)
       {
-        lv_textarea_set_text(ta, " 512 MAX");
+        lv_textarea_set_text(ta, "1 -> 512 MAX");
         lv_textarea_add_char(ta, '\n');
         c_i_1 = 0;
         ch_input_1 = 0;
       }
     }
-    else if (old_fon == -1)
+    else if (old_fonction_call == -1)
     {
+      Serial.println(" else if (old_fonction_call == -1) ");
       if (ch_input_1 <= 512 && ch_input_1 != 0)
       {
         Serial.println(" ------ ch -------- ");
@@ -266,36 +279,65 @@ void key(uint8_t key_value)
         ch_input_1 = 0;
       }
     }
-    else if (old_fon == 1)
+    else if (old_fonction_call == 1)
     {
       Serial.println(" ------ Thru -------- ");
       if (ch_input_1 < ch_input_2)
       {
-        for( int i = ch_input_1 ; i <= ch_input_2 ; i++)
+        for (int i = ch_input_1; i <= ch_input_2; i++)
         {
           select[i] = true;
         }
       }
       else if (ch_input_2 < ch_input_1)
       {
-        for( int i = ch_input_2 ; i <= ch_input_1 ; i++)
+        for (int i = ch_input_2; i <= ch_input_1; i++)
         {
           select[i] = true;
         }
       }
+      c_i_1 = 0;
+      c_i_2 = 0;
+      ch_input_1 = 0;
+      ch_input_2 = 0;
     }
-    else if (old_fon == 2)
+    else if (old_fonction_call == 4)
     {
+      Serial.println(" moins-- Thru ---moins ");
+      if (ch_input_1 < ch_input_2)
+      {
+        for (int i = ch_input_1; i <= ch_input_2; i++)
+        {
+          select[i] = false;
+        }
+      }
+      else if (ch_input_2 < ch_input_1)
+      {
+        for (int i = ch_input_2; i <= ch_input_1; i++)
+        {
+          select[i] = false;
+        }
+      }
+      c_i_1 = 0;
+      c_i_2 = 0;
+      ch_input_1 = 0;
+      ch_input_2 = 0;
+    }
+    else if (old_fonction_call == 2 && fonction_call == 3)
+    {
+      Serial.println(" else if (old_fonction_call == 2 && fonction_call == 3) ");
+
       if (ch_input_1 <= 255 && ch_input_1 >= 0)
       {
-        for (int i=1 ; i<=512 ; i++)
+        for (int i = 1; i <= 512; i++)
         {
           if (select[i])
           {
-            output[i]= dim_input_3;
+            output[i] = dim_input_3;
+            Serial.print(" output[i] = ");
+            Serial.println(i);
           }
         }
-        
       }
       else if (ch_input_1 > 255 || ch_input_1 < 0)
       {
@@ -305,10 +347,91 @@ void key(uint8_t key_value)
         ch_input_1 = 0;
       }
     }
-    else if (old_fon == 3)
+    else if (fonction_call == 2 && old_fonction_call != 2)
     {
-      Serial.println(" to do send dmx ");
+      Serial.println(" else if (fonction_call == 2 && old_fonction_call != 2) ");
+
+      if (ch_input_1 <= 512)
+      {
+        Serial.println("  at +++++++ ch *** ");
+        select[ch_input_1] = true;
+        c_i_1 = 0;
+        ch_input_1 = 0;
+      }
+      else if (ch_input_1 > 512)
+      {
+        lv_textarea_set_text(ta, "1 -> 512 MAX");
+        lv_textarea_add_char(ta, '\n');
+        c_i_1 = 0;
+        ch_input_1 = 0;
+      }
     }
+  }
+  if (fonction_call == 3)
+  {
+    Serial.println(" list ch ");
+    lv_textarea_add_char(ta, '\n');
+    c_i_1 = 0;
+    c_i_2 = 0;
+    ch_input_1 = 0;
+    ch_input_2 = 0;
+    fonction_call = 0;
+    old_fonction_call = 0;
+    lv_textarea_add_text(ta, " Ch : ");
+    for (int i = 1; i <= 512; i++)
+    {
+      if (select[i])
+      {
+        char ch[3];
+        sprintf(ch, "%d", i);
+        lv_textarea_add_char(ta, ch[0]);
+        if (i > 9)
+        {
+          lv_textarea_add_char(ta, ch[1]);
+          lv_textarea_add_char(ta, ch[2]);
+        }
+        lv_textarea_add_text(ta, " + ");
+      }
+    }
+  }
+  else if (fonction_call == 5)
+  {
+    Serial.println(" send ch ");
+    lv_textarea_add_char(ta, '\n');
+    c_i_1 = 0;
+    c_i_2 = 0;
+    ch_input_1 = 0;
+    ch_input_2 = 0;
+    fonction_call = 0;
+    old_fonction_call = 0;
+    lv_textarea_add_text(ta, " Send Ch : ");
+    for (int i = 1; i <= 512; i++)
+    {
+      if (select[i])
+      {
+        char ch[3];
+        sprintf(ch, "%d", i);
+        lv_textarea_add_char(ta, ch[0]);
+        if (i > 9)
+        {
+          lv_textarea_add_char(ta, ch[1]);
+          lv_textarea_add_char(ta, ch[2]);
+        }
+        lv_textarea_add_text(ta, " + ");
+      }
+    }
+    lv_textarea_add_text(ta, " AT ");
+    char dim[3];
+    sprintf(dim, "%d", dim_input_3);
+    lv_textarea_add_char(ta, dim[0]);
+    if (dim_input_3 > 9)
+    {
+      lv_textarea_add_char(ta, dim[1]);
+      lv_textarea_add_char(ta, dim[2]);
+    }
+    d_i_3 = 0;
+    dim_input_3 = 0;
+    Serial.println(" to do send dmx ");
   }
 
   Serial.print(" ch 1 : ");
@@ -317,10 +440,10 @@ void key(uint8_t key_value)
   Serial.print(ch_input_2);
   Serial.print(" | dim : ");
   Serial.print(dim_input_3);
-  Serial.print(" | old_fon : ");
-  Serial.print(old_fon);
-  Serial.print(" | fon : ");
-  Serial.println(fon);
+  Serial.print(" | old_fonction_call : ");
+  Serial.print(old_fonction_call);
+  Serial.print(" | fonction_call : ");
+  Serial.println(fonction_call);
   for (int i = 1; i <= 512; i++)
   {
     if (select[i])
@@ -329,7 +452,7 @@ void key(uint8_t key_value)
       Serial.print(i);
     }
   }
-  old_fon = fon;
+  old_fonction_call = fonction_call;
 }
 
 #endif
