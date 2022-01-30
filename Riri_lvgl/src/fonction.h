@@ -139,6 +139,7 @@ void fonction()
       {
         fonction_call = 5;
       }
+      clear_time = 0;
       lv_textarea_add_text(ta, " Please ");
       key(14);
       Serial.println("\t->Thanks!");
@@ -388,6 +389,7 @@ void key(uint8_t key_value)
     if (clear_time == 0)
     {
       lv_textarea_add_char(ta, '\n');
+      lv_textarea_add_text(ta, " Clear I ");
     }
     else if (clear_time == 1)
     {
@@ -395,6 +397,7 @@ void key(uint8_t key_value)
       {
         select[i] = false;
       }
+      lv_textarea_add_text(ta, " Clear II Select ");
     }
     else if (clear_time == 2)
     {
@@ -402,8 +405,8 @@ void key(uint8_t key_value)
       {
         output[i] = 0;
       }
+      lv_textarea_add_text(ta, " Clear III Output ");
     }
-    lv_textarea_add_text(ta, " Clear ");
     clear_time++;
     if (clear_time >= 3)
     {
