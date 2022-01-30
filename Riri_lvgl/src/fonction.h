@@ -16,6 +16,8 @@ uint8_t char_input_3[2];
 int8_t fonction_call;
 int8_t old_fonction_call;
 
+uint8_t clear_time;
+
 bool select[513];
 uint8_t output[513];
 
@@ -38,6 +40,7 @@ void init_variable()
   dim_input_3 = 0;
   fonction_call = 0;
   old_fonction_call = 0;
+  clear_time = 0;
 }
 
 void fonction()
@@ -147,6 +150,16 @@ void fonction()
     else if (strcmp(action, LV_SYMBOL_LEFT) == 0)
     {
       Serial.println("\t->Left");
+    }
+    else if (strcmp(action, "Clear") == 0)
+    {
+      key(15);
+    }
+    else if (strcmp(action, "If") == 0)
+    {
+      lv_textarea_add_char(ta, '\n');
+      lv_textarea_add_text(ta, " if ");
+      key(16);
     }
   }
 }
@@ -370,6 +383,43 @@ void key(uint8_t key_value)
       }
     }
   }
+  else if (key_value == 15)
+  {
+    if (clear_time == 0)
+    {
+      lv_textarea_add_char(ta, '\n');
+    }
+    else if (clear_time == 1)
+    {
+      for (int i = 1; i <= 512; i++)
+      {
+        select[i] = false;
+      }
+    }
+    else if (clear_time == 2)
+    {
+      for (int i = 1; i <= 512; i++)
+      {
+        output[i] = 0;
+      }
+    }
+    lv_textarea_add_text(ta, " Clear ");
+    clear_time++;
+    if (clear_time >= 3)
+    {
+      clear_time = 0;
+    }
+  }
+  else if (key_value == 16)
+  {
+    for (int i = 1; i <= 512; i++)
+    {
+      if (output[i] > 0)
+      {
+        select[i] = true;
+      }
+    }
+  }
   if (fonction_call == 3)
   {
     Serial.println(" list ch ");
@@ -444,6 +494,8 @@ void key(uint8_t key_value)
     lv_textarea_add_text(ta, " Ch : ");
   }
 
+  Serial.print(" clear : ");
+  Serial.print(clear_time);
   Serial.print(" ch 1 : ");
   Serial.print(ch_input_1);
   Serial.print(" | ch 2 : ");
