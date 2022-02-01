@@ -5,12 +5,12 @@
 #include "init.h"
 #include "remote.h"
 #include "fonction.h"
-#include "dmx.h"
+// #include "dmx.h"
 
 // 35(i2s_out) 26 (i2s_in) 25(i2s_lock) 5(i2sc) 0(i2s_mc) 23 22 13 15 2 4 33 32 27 14 12 21 34 
-#define DMX_SERIAL_INPUT_PIN 26
-#define DMX_DIRECTION_INPUT_PIN 25
-#define DMX_SERIAL_OUTPUT_PIN 35
+#define DMX_SERIAL_INPUT_PIN 2
+#define DMX_DIRECTION_INPUT_PIN 15
+#define DMX_SERIAL_OUTPUT_PIN 4
 
 static void lv_tick_task(void)
 {
@@ -24,8 +24,8 @@ void setup()
 
   // SET INPUT RX2
   // pinMode(DMX_SERIAL_INPUT_PIN, INPUT);
-  ESP32DMX.setDirectionPin(DMX_DIRECTION_INPUT_PIN);
-  ESP32DMX1.startInput(DMX_SERIAL_INPUT_PIN);
+  // ESP32DMX1.setDirectionPin(DMX_DIRECTION_INPUT_PIN);
+  // ESP32DMX1.startInput(DMX_SERIAL_INPUT_PIN);
 
   // SET OUTPUT TX1
   pinMode(DMX_SERIAL_OUTPUT_PIN, OUTPUT);
@@ -52,5 +52,4 @@ void loop()
   delay(1);
 
   fonction();
-  // copyDMXToOutput();
 }
