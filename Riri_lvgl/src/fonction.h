@@ -24,6 +24,7 @@ uint8_t output[513];
 void init_variable();
 void key(uint8_t key_value);
 void fonction();
+void copyDMXToOutput(void);
 
 void init_variable()
 {
@@ -406,6 +407,7 @@ void key(uint8_t key_value)
         output[i] = 0;
       }
       lv_textarea_add_text(ta, " Clear III Output ");
+      copyDMXToOutput();
     }
     clear_time++;
     if (clear_time >= 3)
@@ -479,6 +481,7 @@ void key(uint8_t key_value)
         }
         lv_textarea_add_text(ta, " + ");
       }
+      select[i] = false;
     }
     lv_textarea_add_text(ta, " AT ");
     char dim[3];
@@ -495,6 +498,7 @@ void key(uint8_t key_value)
     lv_textarea_add_char(ta, '\n');
     lv_textarea_add_char(ta, '\n');
     lv_textarea_add_text(ta, " Ch : ");
+    copyDMXToOutput();
   }
 
   Serial.print(" clear : ");
@@ -518,6 +522,16 @@ void key(uint8_t key_value)
     }
   }
   old_fonction_call = fonction_call;
+}
+
+void copyDMXToOutput(void)
+{
+  xSemaphoreTake(ESP32DMX.lxDataLock, portMAX_DELAY);
+  for (int i = 1; i <= 512; i++)
+  {
+    ESP32DMX.setSlot(i, output[i]);
+  }
+  xSemaphoreGive(ESP32DMX.lxDataLock);
 }
 
 #endif
