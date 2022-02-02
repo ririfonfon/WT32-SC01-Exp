@@ -1,13 +1,14 @@
 #include <Arduino.h>
 #include "LXESP32DMX.h"
-#include "LXESP32DMX1.h"
+#include "ririlvgl_LXESP32DMX1.h"
 
 #include "init.h"
 #include "remote.h"
 #include "fonction.h"
 // #include "dmx.h"
 
-// 35(i2s_out) 26 (i2s_in) 25(i2s_lock) 5(i2sc) 0(i2s_mc) 23 22 13 15 2 4 33 32 27 14 12 21 34 
+// 35(i2s_out) 26 (i2s_in) 25(i2s_lock) 5(i2sc) 0(i2s_mc) 23 22 13 15 2 4 33 32 27 14 12 21 34
+// Work with dmx 2? 15? 4ok
 #define DMX_SERIAL_INPUT_PIN 2
 #define DMX_DIRECTION_INPUT_PIN 15
 #define DMX_SERIAL_OUTPUT_PIN 4
@@ -19,17 +20,7 @@ static void lv_tick_task(void)
 
 void setup()
 {
-
   Serial.begin(115200);
-
-  // SET INPUT RX2
-  // pinMode(DMX_SERIAL_INPUT_PIN, INPUT);
-  // ESP32DMX1.setDirectionPin(DMX_DIRECTION_INPUT_PIN);
-  // ESP32DMX1.startInput(DMX_SERIAL_INPUT_PIN);
-
-  // SET OUTPUT TX1
-  pinMode(DMX_SERIAL_OUTPUT_PIN, OUTPUT);
-  ESP32DMX.startOutput(DMX_SERIAL_OUTPUT_PIN);
 
   // lv_lib
   lv_init();
@@ -44,6 +35,15 @@ void setup()
 
   // lv_keypad_encoder();
   menu_create();
+
+  // SET INPUT RX2
+  // pinMode(DMX_SERIAL_INPUT_PIN, INPUT);
+  // ESP32DMX1.setDirectionPin(DMX_DIRECTION_INPUT_PIN);
+  ESP32DMX1.startInput(DMX_SERIAL_INPUT_PIN);
+
+  // SET OUTPUT TX1
+  pinMode(DMX_SERIAL_OUTPUT_PIN, OUTPUT);
+  ESP32DMX.startOutput(DMX_SERIAL_OUTPUT_PIN);
 }
 
 void loop()
@@ -52,4 +52,6 @@ void loop()
   delay(1);
 
   fonction();
+
+  ESP32DMX1.getSlot(1);
 }
