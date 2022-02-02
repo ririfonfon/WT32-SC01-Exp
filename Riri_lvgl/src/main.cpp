@@ -38,7 +38,7 @@ void setup()
 
   // SET INPUT RX2
   // pinMode(DMX_SERIAL_INPUT_PIN, INPUT);
-  // ESP32DMX1.setDirectionPin(DMX_DIRECTION_INPUT_PIN);
+  ESP32DMX1.setDirectionPin(DMX_DIRECTION_INPUT_PIN);
   ESP32DMX1.startInput(DMX_SERIAL_INPUT_PIN);
 
   // SET OUTPUT TX1
@@ -53,5 +53,5 @@ void loop()
 
   fonction();
 
-  ESP32DMX1.getSlot(1);
+  Serial.println(ESP32DMX1.getSlot(1));
 }
