@@ -494,7 +494,6 @@ void key(uint8_t key_value)
     }
     d_i_3 = 0;
     dim_input_3 = 0;
-    Serial.println(" to do send dmx ");
     lv_textarea_add_char(ta, '\n');
     lv_textarea_add_char(ta, '\n');
     lv_textarea_add_text(ta, " Ch : ");
@@ -526,6 +525,11 @@ void key(uint8_t key_value)
 
 void copyDMXToOutput(void)
 {
+  Serial.println("send dmx ");
+  Serial.print("CH : 1 = ");
+  Serial.println(output[1]);
+  Serial.print("CH : 2 = ");
+  Serial.println(output[2]);
   xSemaphoreTake(ESP32DMX.lxDataLock, portMAX_DELAY);
   for (int i = 1; i <= 512; i++)
   {
