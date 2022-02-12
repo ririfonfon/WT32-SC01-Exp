@@ -19,7 +19,7 @@ int8_t old_fonction_call;
 uint8_t clear_time;
 
 bool select[513];
-uint8_t output[513];
+int16_t output[513];
 
 void init_variable();
 void key(uint8_t key_value);
@@ -171,6 +171,16 @@ void fonction()
     {
       lv_textarea_add_text(ta, " Half ");
       key(19);
+    }
+    else if (strcmp(action, "-10") == 0)
+    {
+      lv_textarea_add_text(ta, " -10 ");
+      key(20);
+    }
+    else if (strcmp(action, "+10") == 0)
+    {
+      lv_textarea_add_text(ta, " +10 ");
+      key(21);
     }
   }
 }
@@ -443,33 +453,31 @@ void key(uint8_t key_value)
 
   else if (key_value == 15) // Clear
   {
+    lv_textarea_add_char(ta, '\n');
     if (clear_time == 0)
-    {
-      lv_textarea_add_char(ta, '\n');
-      lv_textarea_add_text(ta, " Clear I ");
-    }
-    else if (clear_time == 1)
     {
       for (int i = 1; i <= 512; i++)
       {
         select[i] = false;
       }
-      lv_textarea_add_text(ta, " Clear II Select ");
+      lv_textarea_add_text(ta, " Clear I Select ");
     }
-    else if (clear_time == 2)
+    else if (clear_time == 1)
     {
       for (int i = 1; i <= 512; i++)
       {
         output[i] = 0;
       }
-      lv_textarea_add_text(ta, " Clear III Output ");
+      lv_textarea_add_text(ta, " Clear II Output ");
       copyDMXToOutput();
     }
     clear_time++;
-    if (clear_time >= 3)
+    if (clear_time >= 2)
     {
       clear_time = 0;
     }
+    lv_textarea_add_char(ta, '\n');
+    lv_textarea_add_text(ta, " Ch : ");
   }
   else if (key_value == 16) // If
   {
@@ -488,8 +496,9 @@ void key(uint8_t key_value)
   //******************************************************************************************************
   //******************************************************************************************************
 
-  else if (key_value >= 17 && key_value <= 19) // full zero half
+  else if (key_value >= 17 && key_value <= 21) // full zero half -10 +10
   {
+    clear_time = 0;
     if (old_fonction_call == 0 && fonction_call != 2) // plus != AT
     {
       if (ch_input_1 <= 512)
@@ -648,6 +657,60 @@ void key(uint8_t key_value)
         select[i] = false;
       }
       lv_textarea_add_text(ta, " AT 127");
+      copyDMXToOutput();
+    }
+    else if (key_value == 20) // -10
+    {
+      lv_textarea_add_char(ta, '\n');
+      lv_textarea_add_text(ta, " Send Ch : ");
+      for (int i = 1; i <= 512; i++)
+      {
+        if (select[i])
+        {
+          output[i] = output[i] - 10;
+          if (output[i] < 0)
+          {
+            output[i] = 0;
+          }
+          char ch[3];
+          sprintf(ch, "%d", i);
+          lv_textarea_add_char(ta, ch[0]);
+          if (i > 9)
+          {
+            lv_textarea_add_char(ta, ch[1]);
+            lv_textarea_add_char(ta, ch[2]);
+          }
+          lv_textarea_add_text(ta, " + ");
+        }
+      }
+      lv_textarea_add_text(ta, " AT -10");
+      copyDMXToOutput();
+    }
+    else if (key_value == 21) // +10
+    {
+      lv_textarea_add_char(ta, '\n');
+      lv_textarea_add_text(ta, " Send Ch : ");
+      for (int i = 1; i <= 512; i++)
+      {
+        if (select[i])
+        {
+          output[i] = output[i] + 10;
+          if (output[i] > 255)
+          {
+            output[i] = 255;
+          }
+          char ch[3];
+          sprintf(ch, "%d", i);
+          lv_textarea_add_char(ta, ch[0]);
+          if (i > 9)
+          {
+            lv_textarea_add_char(ta, ch[1]);
+            lv_textarea_add_char(ta, ch[2]);
+          }
+          lv_textarea_add_text(ta, " + ");
+        }
+      }
+      lv_textarea_add_text(ta, " AT +10");
       copyDMXToOutput();
     }
     lv_textarea_add_char(ta, '\n');
