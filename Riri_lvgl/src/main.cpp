@@ -9,12 +9,18 @@
 // #include "dmx.h"
 
 // 35(i2s_out) 26 (i2s_in) 25(i2s_lock) 5(i2sc) 0(i2s_mc) 23 22 13 15 2 4 33 32 27 14 12 21 34
-// Work with dmx 2? 15? 4ok
-// input no work with screen 15
-// input no work 13
-#define DMX_SERIAL_INPUT_PIN 2 // 2 work with screen and lxespdmx
-// #define DMX_DIRECTION_INPUT_PIN 34
-#define DMX_SERIAL_OUTPUT_PIN 4
+
+// input output no work with screen 15 22 21
+// input output no work 13 
+// dir no work 34
+
+#define DMX_SERIAL_INPUT_PIN  12 
+#define DMX_SERIAL_OUTPUT_PIN 23
+#define DMX_DIRECTION         32
+
+#define DMX1_SERIAL_INPUT_PIN  2 // 2 work with screen and lxespdmx
+#define DMX1_SERIAL_OUTPUT_PIN 4
+#define DMX1_DIRECTION         33
 
 // the addresses of the slots to observe
 int test_slotA = 1;
@@ -56,23 +62,23 @@ void receiveCallback(int slots)
 {
   if (slots)
   {
-    xSemaphoreTake(ESP32DMX1.lxDataLock, portMAX_DELAY);
-    if (test_levelA != ESP32DMX1.getSlot(test_slotA))
+    xSemaphoreTake(ESP32DMX.lxDataLock, portMAX_DELAY);
+    if (test_levelA != ESP32DMX.getSlot(test_slotA))
     {
-      test_levelA = ESP32DMX1.getSlot(test_slotA);
+      test_levelA = ESP32DMX.getSlot(test_slotA);
       dataChanged = 1;
     }
-    if (test_levelB != ESP32DMX1.getSlot(test_slotB))
+    if (test_levelB != ESP32DMX.getSlot(test_slotB))
     {
-      test_levelB = ESP32DMX1.getSlot(test_slotB);
+      test_levelB = ESP32DMX.getSlot(test_slotB);
       dataChanged = 1;
     }
-    if (test_levelC != ESP32DMX1.getSlot(test_slotC))
+    if (test_levelC != ESP32DMX.getSlot(test_slotC))
     {
-      test_levelC = ESP32DMX1.getSlot(test_slotC);
+      test_levelC = ESP32DMX.getSlot(test_slotC);
       dataChanged = 1;
     }
-    xSemaphoreGive(ESP32DMX1.lxDataLock);
+    xSemaphoreGive(ESP32DMX.lxDataLock);
   }
 }
 
@@ -87,13 +93,15 @@ void setup()
   Serial.begin(115200);
   Serial.print("setup");
 
-  // DISARM RX2 
+  // DISARM RX 
   pinMode(DMX_SERIAL_INPUT_PIN, OUTPUT);
+  pinMode(DMX1_SERIAL_INPUT_PIN, OUTPUT);
 
   Serial.print(", set callback");
-  ESP32DMX1.setDataReceivedCallback(receiveCallback);
+  ESP32DMX.setDataReceivedCallback(receiveCallback);
 
   digitalWrite(DMX_SERIAL_INPUT_PIN, LOW);
+  digitalWrite(DMX1_SERIAL_INPUT_PIN, LOW);
   delay(200);
 
   // lv_lib
@@ -104,21 +112,27 @@ void setup()
   // Enable TFT & Tactile
   tft_init();
 
-  // varaiable
-  init_variable();
-
   // lv_keypad_encoder();
   menu_create();
 
+  // varaiable
+  init_variable();
+
   // SET INPUT RX2
-  // ESP32DMX.setDirectionPin(DMX_DIRECTION_INPUT_PIN);
-  pinMode(DMX_SERIAL_INPUT_PIN, INPUT);
+  ESP32DMX1.setDirectionPin(DMX1_DIRECTION);
+  pinMode(DMX1_SERIAL_INPUT_PIN, INPUT);
+  pinMode(DMX1_SERIAL_OUTPUT_PIN, OUTPUT);
   delay(100);
-  ESP32DMX1.startInput(DMX_SERIAL_INPUT_PIN);
+  ESP32DMX1.startOutput(DMX1_SERIAL_OUTPUT_PIN);
+  // ESP32DMX1.startInput(DMX1_SERIAL_INPUT_PIN);
 
   // SET OUTPUT TX1
+  ESP32DMX.setDirectionPin(DMX_DIRECTION);
+  pinMode(DMX_SERIAL_INPUT_PIN, INPUT);
   pinMode(DMX_SERIAL_OUTPUT_PIN, OUTPUT);
-  ESP32DMX.startOutput(DMX_SERIAL_OUTPUT_PIN);
+  delay(100);
+  // ESP32DMX.startOutput(DMX_SERIAL_OUTPUT_PIN);
+  ESP32DMX.startInput(DMX_SERIAL_INPUT_PIN);
 
   Serial.println(", setup complete.");
 }
