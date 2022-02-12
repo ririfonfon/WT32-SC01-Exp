@@ -108,10 +108,11 @@ static void remote_create(lv_obj_t *parent)
     lv_style_set_radius(&style_ta, LV_STATE_DEFAULT, 0);
     lv_style_set_text_color(&style_ta, LV_STATE_DEFAULT, LV_COLOR_WHITE);
     lv_style_set_text_color(&style_ta, LV_STATE_FOCUSED, LV_COLOR_RED);
+    lv_style_set_text_font(&style_ta, LV_STATE_DEFAULT, &lv_font_montserrat_20);
 
     ta = lv_textarea_create(parent, NULL);
 
-    lv_obj_set_size(ta, lv_page_get_scrl_width(parent), lv_obj_get_height(parent) / 6 * 2);
+    lv_obj_set_size(ta, lv_page_get_scrl_width(parent), lv_obj_get_height(parent) / 6 * 1);
     lv_obj_add_style(ta, LV_TEXTAREA_PART_BG, &style_ta);
     lv_textarea_set_text(ta, "");
     lv_obj_set_event_cb(ta, text_area_event_handler);
@@ -135,6 +136,7 @@ static void remote_create(lv_obj_t *parent)
     lv_style_set_bg_color(&style_kb, LV_BTN_STATE_RELEASED, lv_color_hex3(0x333));
     lv_style_set_bg_grad_color(&style_kb, LV_BTN_STATE_RELEASED, lv_color_hex3(0x333));
     lv_style_set_text_color(&style_kb, LV_BTN_STATE_RELEASED, LV_COLOR_WHITE);
+    lv_style_set_text_font(&style_kb, LV_STATE_DEFAULT, &lv_font_montserrat_20);
 
     lv_style_set_radius(&style_kb, LV_BTN_STATE_PRESSED, 0);
     lv_style_set_bg_opa(&style_kb, LV_BTN_STATE_PRESSED, LV_OPA_50);
@@ -151,7 +153,7 @@ static void keyboard_create(lv_obj_t *parent)
     if (kb == NULL)
         {
             kb = lv_keyboard_create(parent, NULL);
-            lv_obj_set_size(kb, lv_obj_get_width_fit(parent), lv_obj_get_height_fit(parent) / 6 * 4);
+            lv_obj_set_size(kb, lv_obj_get_width_fit(parent), lv_obj_get_height_fit(parent) / 6 * 5);
             lv_obj_align(kb, ta, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
             lv_keyboard_set_textarea(kb, ta);
             lv_obj_add_style(kb, LV_KEYBOARD_PART_BG, &style_kb);
