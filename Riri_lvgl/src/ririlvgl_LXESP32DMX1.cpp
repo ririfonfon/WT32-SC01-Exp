@@ -207,7 +207,7 @@ void LX32DMX1::startInput ( uint8_t pin ) {
 	// disable input --if direction pin is used-- until setup complete
 	if ( _direction_pin != DIRECTION_PIN_NOT_USED ) {
 		Serial.println("if ( _direction_pin != DIRECTION_PIN_NOT_USED )");
-		digitalWrite(_direction_pin, HIGH);
+		digitalWrite(_direction_pin, LOW);
 	}
 	
 	LXSerial1.begin(250000, SERIAL_8N2, pin, NO_PIN);
