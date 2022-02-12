@@ -12,7 +12,7 @@
 // Work with dmx 2? 15? 4ok
 // input no work with screen 15
 // input no work 13
-#define DMX_SERIAL_INPUT_PIN 2 // 2 work with screen an lxespdmx
+#define DMX_SERIAL_INPUT_PIN 2 // 2 work with screen and lxespdmx
 // #define DMX_DIRECTION_INPUT_PIN 34
 #define DMX_SERIAL_OUTPUT_PIN 4
 
@@ -87,7 +87,7 @@ void setup()
   Serial.begin(115200);
   Serial.print("setup");
 
-  // DISARM RX2 (using gpio15)
+  // DISARM RX2 
   pinMode(DMX_SERIAL_INPUT_PIN, OUTPUT);
 
   Serial.print(", set callback");

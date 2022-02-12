@@ -526,15 +526,19 @@ void key(uint8_t key_value)
 void copyDMXToOutput(void)
 {
   Serial.println("send dmx ");
-  Serial.print("CH : 1 = ");
-  Serial.println(output[1]);
-  Serial.print("CH : 2 = ");
-  Serial.println(output[2]);
   xSemaphoreTake(ESP32DMX.lxDataLock, portMAX_DELAY);
   for (int i = 1; i <= 512; i++)
   {
     ESP32DMX.setSlot(i, output[i]);
+    if (output[i])
+    {
+      Serial.print("CH : ");
+      Serial.print(i);
+      Serial.print(" = ");
+      Serial.print(output[i]);
+    }
   }
+  Serial.println("");
   xSemaphoreGive(ESP32DMX.lxDataLock);
 }
 
