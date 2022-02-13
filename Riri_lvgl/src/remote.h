@@ -34,6 +34,7 @@ static void list_btn_event_handler(lv_obj_t *slider, lv_event_t event);
 static lv_obj_t *chart;
 static lv_obj_t *ta;
 static lv_obj_t *kb;
+static lv_obj_t *tv;
 
 static lv_style_t style_kb;
 
@@ -74,18 +75,20 @@ void menu_create(void)
     lv_style_set_border_width(&style_tv_btn, LV_BTN_STATE_PRESSED, 0);
     lv_style_set_text_color(&style_tv_btn, LV_BTN_STATE_PRESSED, LV_COLOR_WHITE);
 
-    lv_obj_t *tv = lv_tabview_create(lv_scr_act(), NULL);
+    tv = lv_tabview_create(lv_scr_act(), NULL);
+    // lv_obj_t *tv = lv_tabview_create(lv_scr_act(), NULL);
+
     lv_obj_set_size(tv, hres, vres);
 
     lv_obj_t *tab1 = lv_tabview_add_tab(tv, "Remote");
-    // lv_obj_t *tab2 = lv_tabview_add_tab(tv, "Option");
-    // lv_obj_t *tab3 = lv_tabview_add_tab(tv, "Output");
+    lv_obj_t *tab2 = lv_tabview_add_tab(tv, "Output");
+    // lv_obj_t *tab3 = lv_tabview_add_tab(tv, "Option");
 
     lv_obj_add_style(tv, LV_TABVIEW_PART_TAB_BTN, &style_tv_btn);
 
     remote_create(tab1);
+    output_create(tab2);
     // option_create(tab2);
-    // output_create(tab3);
 
 }
 
@@ -309,7 +312,7 @@ static void output_create(lv_obj_t *parent)
     lv_style_set_pad_right(&style_page, LV_STATE_DEFAULT, 5);
 
     lv_obj_add_style(parent, LV_PAGE_PART_BG, &style_page);
-    lv_obj_add_style(parent, LV_PAGE_PART_SCROLLABLE, &style_page);
+    // lv_obj_add_style(parent, LV_PAGE_PART_SCROLLABLE, &style_page);
 
     lv_page_set_scrl_height(parent, lv_obj_get_height(parent));
     lv_page_set_scrollbar_mode(parent, LV_SCROLLBAR_MODE_OFF);
@@ -327,6 +330,12 @@ static void output_create(lv_obj_t *parent)
     lv_chart_set_type(chart, LV_CHART_TYPE_COLUMN);
     lv_obj_add_style(chart, LV_CHART_PART_BG, &style_chart);
     lv_obj_add_style(chart, LV_CHART_PART_SERIES, &style_chart);
+
+    lv_chart_set_range(chart, 0, 255);
+    lv_chart_set_point_count(chart, 5);
+    // lv_chart_set_x_tick_length(chart, 10, 5);
+
+    
 
     lv_chart_series_t *ser1;
     ser1 = lv_chart_add_series(chart, LV_COLOR_RED);
@@ -380,8 +389,8 @@ static void output_create(lv_obj_t *parent)
     lv_obj_set_size(slider, lv_obj_get_width(chart), LV_DPI / 3);
     lv_obj_align(slider, chart, LV_ALIGN_OUT_BOTTOM_MID, 0, (vres - chart->coords.y2 - lv_obj_get_height(slider)) / 2); /*Align to below the chart*/
     lv_obj_set_event_cb(slider, slider_event_handler);
-    lv_slider_set_range(slider, 10, 1000);
-    lv_slider_set_value(slider, 700, false);
+    lv_slider_set_range(slider, 1, 1000);
+    lv_slider_set_value(slider, 1000, false);
     slider_event_handler(slider, LV_EVENT_VALUE_CHANGED); /*Simulate a user value set the refresh the chart*/
 }
 
