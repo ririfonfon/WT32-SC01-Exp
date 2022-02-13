@@ -25,6 +25,7 @@ static void kb_hide_anim_end(lv_anim_t *a);
 
 static void option_create(lv_obj_t *parent);
 static void output_create(lv_obj_t *parent);
+static void output_update();
 static void slider_event_handler(lv_obj_t *slider, lv_event_t event);
 static void list_btn_event_handler(lv_obj_t *slider, lv_event_t event);
 
@@ -35,10 +36,13 @@ static lv_obj_t *chart;
 static lv_obj_t *ta;
 static lv_obj_t *kb;
 static lv_obj_t *tv;
+static lv_obj_t *tab2;
+static lv_chart_series_t *ser1;
 
 static lv_style_t style_kb;
 
-void getAction(char* action) {
+void getAction(char *action)
+{
     lv_keyboard_get_lastTxt(kb, action);
 }
 
@@ -53,6 +57,7 @@ void getAction(char* action) {
 /**
  * Create a remote application
  */
+
 void menu_create(void)
 {
     lv_coord_t hres = lv_disp_get_hor_res(NULL);
@@ -70,7 +75,7 @@ void menu_create(void)
     lv_style_set_border_width(&style_tv_btn, LV_BTN_STATE_RELEASED, 0);
     lv_style_set_radius(&style_tv_btn, LV_BTN_STATE_PRESSED, 0);
     lv_style_set_bg_opa(&style_tv_btn, LV_BTN_STATE_PRESSED, LV_OPA_70);
-    lv_style_set_bg_color(&style_tv_btn, LV_BTN_STATE_PRESSED, LV_COLOR_BLACK);// couleur colone selectionné
+    lv_style_set_bg_color(&style_tv_btn, LV_BTN_STATE_PRESSED, LV_COLOR_BLACK); // couleur colone selectionné
     lv_style_set_bg_grad_color(&style_tv_btn, LV_BTN_STATE_PRESSED, LV_COLOR_RED);
     lv_style_set_border_width(&style_tv_btn, LV_BTN_STATE_PRESSED, 0);
     lv_style_set_text_color(&style_tv_btn, LV_BTN_STATE_PRESSED, LV_COLOR_WHITE);
@@ -89,7 +94,6 @@ void menu_create(void)
     remote_create(tab1);
     output_create(tab2);
     // option_create(tab2);
-
 }
 
 /**********************
@@ -148,32 +152,32 @@ static void remote_create(lv_obj_t *parent)
     lv_style_set_border_width(&style_kb, LV_BTN_STATE_PRESSED, 1);
     lv_style_set_border_color(&style_kb, LV_BTN_STATE_PRESSED, LV_COLOR_SILVER);
 
-    keyboard_create(parent);       
+    keyboard_create(parent);
 }
 
 static void keyboard_create(lv_obj_t *parent)
 {
     if (kb == NULL)
-        {
-            kb = lv_keyboard_create(parent, NULL);
-            lv_obj_set_size(kb, lv_obj_get_width_fit(parent), lv_obj_get_height_fit(parent) / 6 * 5);
-            lv_obj_align(kb, ta, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
-            lv_keyboard_set_textarea(kb, ta);
-            lv_obj_add_style(kb, LV_KEYBOARD_PART_BG, &style_kb);
-            lv_obj_add_style(kb, LV_KEYBOARD_PART_BTN, &style_kb);
-            lv_obj_set_event_cb(kb, keyboard_event_cb);
+    {
+        kb = lv_keyboard_create(parent, NULL);
+        lv_obj_set_size(kb, lv_obj_get_width_fit(parent), lv_obj_get_height_fit(parent) / 6 * 5);
+        lv_obj_align(kb, ta, LV_ALIGN_OUT_BOTTOM_MID, 0, 0);
+        lv_keyboard_set_textarea(kb, ta);
+        lv_obj_add_style(kb, LV_KEYBOARD_PART_BG, &style_kb);
+        lv_obj_add_style(kb, LV_KEYBOARD_PART_BTN, &style_kb);
+        lv_obj_set_event_cb(kb, keyboard_event_cb);
 
-            lv_keyboard_set_mode(kb,5);
+        lv_keyboard_set_mode(kb, 5);
 
-            lv_anim_t a;
-            lv_anim_init(&a);
-            lv_anim_set_var(&a, kb);
-            lv_anim_set_time(&a, 300);
-            lv_anim_set_values(&a, LV_VER_RES, lv_obj_get_y(kb));
-            lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)lv_obj_set_y);
-            lv_anim_set_ready_cb(&a, NULL);
-            lv_anim_start(&a);
-        }
+        lv_anim_t a;
+        lv_anim_init(&a);
+        lv_anim_set_var(&a, kb);
+        lv_anim_set_time(&a, 300);
+        lv_anim_set_values(&a, LV_VER_RES, lv_obj_get_y(kb));
+        lv_anim_set_exec_cb(&a, (lv_anim_exec_xcb_t)lv_obj_set_y);
+        lv_anim_set_ready_cb(&a, NULL);
+        lv_anim_start(&a);
+    }
 }
 
 static void text_area_event_handler(lv_obj_t *text_area, lv_event_t event)
@@ -183,8 +187,7 @@ static void text_area_event_handler(lv_obj_t *text_area, lv_event_t event)
     /*Text area is on the scrollable part of the page but we need the page itself*/
     lv_obj_t *parent = lv_obj_get_parent(lv_obj_get_parent(ta));
 
-        keyboard_create(parent); 
-    
+    keyboard_create(parent);
 }
 
 /**
@@ -297,6 +300,7 @@ static void option_create(lv_obj_t *parent)
 
 static void output_create(lv_obj_t *parent)
 {
+    lv_page_set_scrollbar_mode(parent, LV_SCROLLBAR_MODE_OFF);
 
     lv_coord_t vres = lv_disp_get_ver_res(NULL);
 
@@ -314,8 +318,7 @@ static void output_create(lv_obj_t *parent)
     lv_obj_add_style(parent, LV_PAGE_PART_BG, &style_page);
     // lv_obj_add_style(parent, LV_PAGE_PART_SCROLLABLE, &style_page);
 
-    lv_page_set_scrl_height(parent, lv_obj_get_height(parent));
-    lv_page_set_scrollbar_mode(parent, LV_SCROLLBAR_MODE_OFF);
+    // lv_page_set_scrl_height(parent, lv_obj_get_height(parent));
 
     static lv_style_t style_chart;
     lv_style_init(&style_chart);
@@ -325,30 +328,31 @@ static void output_create(lv_obj_t *parent)
     lv_style_set_line_opa(&style_chart, LV_STATE_DEFAULT, LV_OPA_70);
 
     chart = lv_chart_create(parent, NULL);
+
     lv_obj_set_size(chart, 2 * lv_obj_get_width(parent) / 3, lv_obj_get_height(parent) / 2);
     lv_obj_align(chart, NULL, LV_ALIGN_IN_TOP_MID, 0, LV_DPI / 4);
     lv_chart_set_type(chart, LV_CHART_TYPE_COLUMN);
     lv_obj_add_style(chart, LV_CHART_PART_BG, &style_chart);
     lv_obj_add_style(chart, LV_CHART_PART_SERIES, &style_chart);
 
+    const char *list = {"0,25,50,75,100,125,150,175,200,225,255,\n"};
     lv_chart_set_range(chart, 0, 255);
-    lv_chart_set_point_count(chart, 5);
-    // lv_chart_set_x_tick_length(chart, 10, 5);
-
-    
+    lv_chart_set_point_count(chart, 10);
+    lv_chart_set_x_tick_length(chart, 10, 5);
+    lv_chart_set_y_tick_length(chart, 10, 5);
+    lv_chart_set_x_tick_texts(chart, list, 10, 10);
+    lv_chart_set_y_tick_texts(chart, list, 10, 10);
 
     lv_chart_series_t *ser1;
     ser1 = lv_chart_add_series(chart, LV_COLOR_RED);
-    lv_chart_set_next(chart, ser1, 40);
-    lv_chart_set_next(chart, ser1, 30);
-    lv_chart_set_next(chart, ser1, 47);
-    lv_chart_set_next(chart, ser1, 59);
-    lv_chart_set_next(chart, ser1, 59);
-    lv_chart_set_next(chart, ser1, 31);
-    lv_chart_set_next(chart, ser1, 55);
-    lv_chart_set_next(chart, ser1, 70);
-    lv_chart_set_next(chart, ser1, 82);
-    lv_chart_set_next(chart, ser1, 100);
+    for (int i = 0; i < 9; i++)
+    {
+        lv_chart_set_next(chart, ser1, 0);
+    }
+    for (int i = 0; i < 9; i++)
+    {
+        ser1->points[i] = i + 3 * 20;
+    }
 
     /*Create a bar, an indicator and a knob style*/
     static lv_style_t style_bar;
@@ -392,6 +396,26 @@ static void output_create(lv_obj_t *parent)
     lv_slider_set_range(slider, 1, 1000);
     lv_slider_set_value(slider, 1000, false);
     slider_event_handler(slider, LV_EVENT_VALUE_CHANGED); /*Simulate a user value set the refresh the chart*/
+}
+
+static void output_update()
+{
+    Serial.print(" => IIIIIIIIIIINNNNNNN ");
+    // lv_chart_clear_series(chart, ser1);
+    // Serial.print(" lv_chart_clear_series(chart, ser1); ");
+    int count = 0;
+    for (int i = 1; i <= 512; i++)
+    {
+        if (output[i] > 0)
+        {
+            Serial.print(" => (output[i] > 0) ");
+            count++;
+            Serial.print(" => count++; ");
+            // lv_chart_set_next(chart, ser1, output[i]);
+            Serial.print(" => lv_chart_set_next(chart, ser1, output[i]); ");
+        }
+        Serial.print(" => i ");
+    }
 }
 
 /**
