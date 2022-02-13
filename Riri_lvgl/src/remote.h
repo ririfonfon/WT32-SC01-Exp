@@ -25,7 +25,6 @@ static void kb_hide_anim_end(lv_anim_t *a);
 
 static void option_create(lv_obj_t *parent);
 static void output_create(lv_obj_t *parent);
-static void output_update();
 static void slider_event_handler(lv_obj_t *slider, lv_event_t event);
 static void list_btn_event_handler(lv_obj_t *slider, lv_event_t event);
 
@@ -396,26 +395,6 @@ static void output_create(lv_obj_t *parent)
     lv_slider_set_range(slider, 1, 1000);
     lv_slider_set_value(slider, 1000, false);
     slider_event_handler(slider, LV_EVENT_VALUE_CHANGED); /*Simulate a user value set the refresh the chart*/
-}
-
-static void output_update()
-{
-    Serial.print(" => IIIIIIIIIIINNNNNNN ");
-    // lv_chart_clear_series(chart, ser1);
-    // Serial.print(" lv_chart_clear_series(chart, ser1); ");
-    int count = 0;
-    for (int i = 1; i <= 512; i++)
-    {
-        if (output[i] > 0)
-        {
-            Serial.print(" => (output[i] > 0) ");
-            count++;
-            Serial.print(" => count++; ");
-            // lv_chart_set_next(chart, ser1, output[i]);
-            Serial.print(" => lv_chart_set_next(chart, ser1, output[i]); ");
-        }
-        Serial.print(" => i ");
-    }
 }
 
 /**
