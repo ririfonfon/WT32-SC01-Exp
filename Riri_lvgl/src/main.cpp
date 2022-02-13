@@ -11,16 +11,16 @@
 // 35(i2s_out) 26 (i2s_in) 25(i2s_lock) 5(i2sc) 0(i2s_mc) 23 22 13 15 2 4 33 32 27 14 12 21 34
 
 // input output no work with screen 15 22 21
-// input output no work 13 
+// input output no work 13
 // dir no work 34
 
-#define DMX_SERIAL_INPUT_PIN  12 
+#define DMX_SERIAL_INPUT_PIN 12
 #define DMX_SERIAL_OUTPUT_PIN 23
-#define DMX_DIRECTION         32
+#define DMX_DIRECTION 32
 
-#define DMX1_SERIAL_INPUT_PIN  2 // 2 work with screen and lxespdmx
+#define DMX1_SERIAL_INPUT_PIN 2 // 2 work with screen and lxespdmx
 #define DMX1_SERIAL_OUTPUT_PIN 4
-#define DMX1_DIRECTION         33
+#define DMX1_DIRECTION 33
 
 // the addresses of the slots to observe
 int test_slotA = 1;
@@ -82,7 +82,6 @@ void receiveCallback(int slots)
   }
 }
 
-
 static void lv_tick_task(void)
 {
   lv_tick_inc(portTICK_RATE_MS);
@@ -93,7 +92,7 @@ void setup()
   Serial.begin(115200);
   Serial.print("setup");
 
-  // DISARM RX 
+  // DISARM RX
   pinMode(DMX_SERIAL_INPUT_PIN, OUTPUT);
   pinMode(DMX1_SERIAL_INPUT_PIN, OUTPUT);
 
@@ -142,7 +141,15 @@ void loop()
   lv_task_handler();
   delay(1);
 
+  if (lv_tabview_get_tab_act(tv) == 0)
+  {
   fonction();
+  }
+  else if (lv_tabview_get_tab_act(tv) == 1)
+  {
+    
+  }
+
 
   if (dataChanged)
   {
@@ -150,15 +157,14 @@ void loop()
     Serial.print(test_slotA);
     Serial.print(" => ");
     Serial.println(test_levelA);
-    
+
     Serial.print(test_slotB);
     Serial.print(" => ");
     Serial.println(test_levelB);
-    
+
     Serial.print(test_slotC);
     Serial.print(" => ");
     Serial.println(test_levelC);
-    
   }
   else
   {
