@@ -3,6 +3,9 @@
 #include "esp_task_wdt.h"
 #include "ririlvgl_LXESP32DMX1.h"
 
+bool update = true;
+int16_t output[513];
+
 #include "init.h"
 #include "remote.h"
 #include "fonction.h"
@@ -43,6 +46,7 @@ uint8_t led_channelB = 2;
 uint8_t led_channelC = 3;
 
 uint8_t dataChanged = 1;
+
 
 /************************************************************************
 
@@ -147,7 +151,14 @@ void loop()
   }
   else if (lv_tabview_get_tab_act(tv) == 1)
   {
-    
+    if(update)
+    {
+      // Serial.print(" => if(update) ");
+      // output_update();
+      // Serial.print(" => output_update(); ");
+      // update = false;
+      // Serial.print(" => false ");
+    }
   }
 
 
