@@ -17,9 +17,7 @@ int8_t fonction_call;
 int8_t old_fonction_call;
 
 uint8_t clear_time;
-
 bool select[513];
-int16_t output[513];
 
 void init_variable();
 void key(uint8_t key_value);
