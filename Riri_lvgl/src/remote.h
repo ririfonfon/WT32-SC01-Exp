@@ -40,18 +40,20 @@ static lv_chart_series_t *ser1;
 
 static lv_style_t style_kb;
 
-void getAction(char *action)
-{
-    lv_keyboard_get_lastTxt(kb, action);
-}
-
 // /**********************
 //  *      MACROS
 //  **********************/
 
+
+
 // /**********************
 //  *   GLOBAL FUNCTIONS
 //  **********************/
+
+void getAction(char *action)
+{
+    lv_keyboard_get_lastTxt(kb, action);
+}
 
 /**
  * Create a remote application
@@ -80,7 +82,6 @@ void menu_create(void)
     lv_style_set_text_color(&style_tv_btn, LV_BTN_STATE_PRESSED, LV_COLOR_WHITE);
 
     tv = lv_tabview_create(lv_scr_act(), NULL);
-    // lv_obj_t *tv = lv_tabview_create(lv_scr_act(), NULL);
 
     lv_obj_set_size(tv, hres, vres);
 
