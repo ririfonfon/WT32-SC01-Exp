@@ -8,7 +8,7 @@ int16_t output[513];
 
 #include "init.h"
 #include "remote.h"
-#include "fonction.h"
+#include "logic_remote.h"
 // #include "dmx.h"
 
 // 35(i2s_out) 26 (i2s_in) 25(i2s_lock) 5(i2sc) 0(i2s_mc) 23 22 13 15 2 4 33 32 27 14 12 21 34
