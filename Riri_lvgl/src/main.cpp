@@ -5,6 +5,7 @@
 
 bool update = true;
 int16_t output[513];
+bool statue = true;
 
 #include "init.h"
 #include "remote.h"
@@ -16,6 +17,8 @@ int16_t output[513];
 // input output no work with screen 15 22 21
 // input output no work 13
 // dir no work 34
+
+#define BOOT_LOADER_TEMP 27
 
 #define DMX_SERIAL_INPUT_PIN 12
 #define DMX_SERIAL_OUTPUT_PIN 23
@@ -96,6 +99,10 @@ void setup()
   Serial.begin(115200);
   Serial.print("setup");
 
+  // DISARM BOOT
+  pinMode(BOOT_LOADER_TEMP, OUTPUT);
+  digitalWrite(BOOT_LOADER_TEMP, LOW);
+
   // DISARM RX
   pinMode(DMX_SERIAL_INPUT_PIN, OUTPUT);
   pinMode(DMX1_SERIAL_INPUT_PIN, OUTPUT);
@@ -138,6 +145,9 @@ void setup()
   ESP32DMX.startInput(DMX_SERIAL_INPUT_PIN);
 
   Serial.println(", setup complete.");
+
+  // ARM BOOT
+  digitalWrite(BOOT_LOADER_TEMP, HIGH);
 }
 
 void loop()
@@ -147,20 +157,17 @@ void loop()
 
   if (lv_tabview_get_tab_act(tv) == 0)
   {
-  fonction();
+    if (statue)
+    {
+      check = true;
+      statue = false;
+    }
+    remote_call();
   }
   else if (lv_tabview_get_tab_act(tv) == 1)
   {
-    if(update)
-    {
-      // Serial.print(" => if(update) ");
-      // output_update();
-      // Serial.print(" => output_update(); ");
-      // update = false;
-      // Serial.print(" => false ");
-    }
+    output_call();
   }
-
 
   if (dataChanged)
   {
