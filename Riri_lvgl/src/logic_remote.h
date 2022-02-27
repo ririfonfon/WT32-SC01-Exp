@@ -21,10 +21,13 @@ int8_t old_fonction_call;
 uint8_t clear_time;
 bool select[513];
 
+bool check = true;
+
 void init_variable();
 void key(uint8_t key_value);
-void fonction();
+void remote_call();
 void copyDMXToOutput(void);
+void output_call();
 
 void init_variable()
 {
@@ -46,7 +49,7 @@ void init_variable()
   lv_textarea_add_text(ta, " Ch : ");
 }
 
-void fonction()
+void remote_call()
 {
   getAction(action);
   if (strcmp(action, "") != 0)
@@ -56,66 +59,54 @@ void fonction()
     if (strcmp(action, "0") == 0)
     {
       key(0);
-      Serial.println("\t->0");
     }
     else if (strcmp(action, "1") == 0)
     {
       key(1);
-      Serial.println("\t->1");
     }
     else if (strcmp(action, "2") == 0)
     {
       key(2);
-      Serial.println("\t->2");
     }
     else if (strcmp(action, "3") == 0)
     {
       key(3);
-      Serial.println("\t->3");
     }
     else if (strcmp(action, "4") == 0)
     {
       key(4);
-      Serial.println("\t->4");
     }
     else if (strcmp(action, "5") == 0)
     {
       key(5);
-      Serial.println("\t->5");
     }
     else if (strcmp(action, "6") == 0)
     {
       key(6);
-      Serial.println("\t->6");
     }
     else if (strcmp(action, "7") == 0)
     {
       key(7);
-      Serial.println("\t->7");
     }
     else if (strcmp(action, "8") == 0)
     {
       key(8);
-      Serial.println("\t->8");
     }
     else if (strcmp(action, "9") == 0)
     {
-      key(9);
-      Serial.println("\t->9");
+      key(9);;
     }
     else if (strcmp(action, "+") == 0)
     {
       fonction_call = 0;
       lv_textarea_add_text(ta, " + ");
       key(10);
-      Serial.println("\t->+");
     }
     else if (strcmp(action, "-") == 0)
     {
       fonction_call = -1;
       lv_textarea_add_text(ta, " - ");
       key(11);
-      Serial.println("\t->-");
     }
     else if (strcmp(action, "Thru") == 0)
     {
@@ -126,14 +117,12 @@ void fonction()
       }
       lv_textarea_add_text(ta, " Thru ");
       key(12);
-      Serial.println("\t->Thru");
     }
     else if (strcmp(action, "At") == 0)
     {
       fonction_call = 2;
       lv_textarea_add_text(ta, " At ");
       key(13);
-      Serial.println("\t->At");
     }
     else if (strcmp(action, "Please") == 0)
     {
@@ -145,7 +134,6 @@ void fonction()
       clear_time = 0;
       lv_textarea_add_text(ta, " Please ");
       key(14);
-      Serial.println("\t->Thanks!");
     }
     else if (strcmp(action, "Clear") == 0)
     {
@@ -153,7 +141,6 @@ void fonction()
     }
     else if (strcmp(action, "If") == 0)
     {
-      // lv_textarea_add_char(ta, '\n');
       lv_textarea_add_text(ta, " if ");
       key(16);
     }
@@ -443,6 +430,7 @@ void key(uint8_t key_value)
       old_fonction_call = 0;
       fonction_call = 0;
       lv_textarea_add_text(ta, " AT Full");
+      lv_textarea_add_char(ta, '\n');
       copyDMXToOutput();
     }
   }
@@ -481,6 +469,13 @@ void key(uint8_t key_value)
     lv_textarea_add_char(ta, '\n');
     lv_textarea_add_text(ta, " Ch : ");
   }
+
+  //    **  **  ******  **   **    **  ******
+  //    ** **   **       ** **     **  **
+  //    ****    ****      ***      **  ******
+  //    ** **   **         *       **  **  **
+  //    **  **  ******     *       **  ******
+
   else if (key_value == 16) // If
   {
     for (int i = 1; i <= 512; i++)
@@ -850,4 +845,47 @@ void copyDMXToOutput(void)
   xSemaphoreGive(ESP32DMX1.lxDataLock);
 }
 
+//   ****  **  ** ****** *****  **  ** ******   ****** ****** **     **     
+//  **  ** **  **   **   **  ** **  **   **     **     **  ** **     **     
+//  **  ** **  **   **   *****  **  **   **     **     ****** **     **     
+//  **  ** **  **   **   **     **  **   **     **     **  ** **     **     
+//   ****   ****    **   **      ****    **     ****** **  ** ****** ****** 
+
+void output_call()
+{
+  if (check)
+  {
+    check = false;
+    statue = true;
+    Serial.println("output_call() ");
+    lv_textarea_set_text(tat, "");
+
+    for (int i = 1; i <= 512; i++)
+    {
+      if (output[i])
+      {
+        lv_textarea_add_text(tat, " Ch : ");
+        char ch[3];
+        sprintf(ch, "%d", i);
+        lv_textarea_add_char(tat, ch[0]);
+        if (i > 9)
+        {
+          lv_textarea_add_char(tat, ch[1]);
+          lv_textarea_add_char(tat, ch[2]);
+        }
+        lv_textarea_add_text(tat, " AT ");
+        char dim[3];
+        int gf = output[i];
+        sprintf(dim, "%d", gf);
+        lv_textarea_add_char(tat, dim[0]);
+        if (gf > 9)
+        {
+          lv_textarea_add_char(tat, dim[1]);
+          lv_textarea_add_char(tat, dim[2]);
+        }
+        lv_textarea_add_char(tat, '\n');
+      }
+    }
+  }
+}
 #endif
