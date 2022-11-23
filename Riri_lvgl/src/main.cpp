@@ -10,7 +10,6 @@ bool statue = true;
 #include "init.h"
 #include "remote.h"
 #include "logic_remote.h"
-// #include "dmx.h"
 
 // 35(i2s_out) 26 (i2s_in) 25(i2s_lock) 5(i2sc) 0(i2s_mc) 23 22 13 15 2 4 33 32 27 14 12 21 34
 
@@ -38,11 +37,6 @@ uint8_t test_levelA = 0;
 uint8_t test_levelB = 0;
 uint8_t test_levelC = 0;
 
-// // pins for PWM output
-// uint8_t led_pinA = 26;
-// uint8_t led_pinB = 33;
-// uint8_t led_pinC = 25;
-
 // ledc channels (set to zero to disable)
 uint8_t led_channelA = 1;
 uint8_t led_channelB = 2;
@@ -69,7 +63,7 @@ void receiveCallback(int slots)
 {
   if (slots)
   {
-    xSemaphoreTake(ESP32DMX.lxDataLock, portMAX_DELAY);
+    xSemaphoreTake(ESP32DMX1.lxDataLock, portMAX_DELAY);
     if (test_levelA != ESP32DMX.getSlot(test_slotA))
     {
       test_levelA = ESP32DMX.getSlot(test_slotA);
@@ -108,7 +102,7 @@ void setup()
   pinMode(DMX1_SERIAL_INPUT_PIN, OUTPUT);
 
   Serial.print(", set callback");
-  ESP32DMX.setDataReceivedCallback(receiveCallback);
+  ESP32DMX1.setDataReceivedCallback(receiveCallback);
 
   digitalWrite(DMX_SERIAL_INPUT_PIN, LOW);
   digitalWrite(DMX1_SERIAL_INPUT_PIN, LOW);
