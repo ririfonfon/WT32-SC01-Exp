@@ -19,7 +19,7 @@ int8_t fonction_call;
 int8_t old_fonction_call;
 
 uint8_t clear_time;
-bool select[513];
+bool selection[513];
 
 bool check = true;
 
@@ -33,7 +33,7 @@ void init_variable()
 {
   for (int i = 0; i <= 513; i++)
   {
-    select[i] = false;
+    selection[i] = false;
     output[i] = 0;
   }
 
@@ -42,7 +42,7 @@ void init_variable()
   ch_input_1 = 0;
   ch_input_2 = 0;
   dim_input_3 = 0;
-  fonction_call = 0;
+  fonction_call = -3;
   old_fonction_call = 0;
   clear_time = 0;
 
@@ -94,24 +94,24 @@ void remote_call()
     }
     else if (strcmp(action, "9") == 0)
     {
-      key(9);;
+      key(9);
     }
-    else if (strcmp(action, "+") == 0)
+    else if (strcmp(action, "  +") == 0)
     {
-      fonction_call = 0;
+      fonction_call = -1;
       lv_textarea_add_text(ta, " + ");
       key(10);
     }
     else if (strcmp(action, "-") == 0)
     {
-      fonction_call = -1;
+      fonction_call = -2;
       lv_textarea_add_text(ta, " - ");
       key(11);
     }
     else if (strcmp(action, "Thru") == 0)
     {
       fonction_call = 1;
-      if (old_fonction_call == -1)
+      if (old_fonction_call == -2)
       {
         fonction_call = 4;
       }
@@ -181,31 +181,48 @@ void key(uint8_t key_value)
 
   if ((key_value >= 0) && (key_value <= 9))
   {
+    bool good;
+
     if (fonction_call < 1)
     {
       Serial.println(" if (fonction_call < 1) ");
+      if (fonction_call == 0)
+      {
+        Serial.println(" if (fonction_call == 0) ");
+        for (int i = 1; i <= 512; i++)
+        {
+          selection[i] = false;
+        }
+        fonction_call = -3;
+        c_i_1 = 0;
+      }
       if (c_i_1 == 0)
       {
         char_input_1[0] = key_value;
         ch_input_1 = char_input_1[0];
+        good = true;
         c_i_1++;
       }
       else if (c_i_1 == 1)
       {
         char_input_1[1] = key_value;
         ch_input_1 = char_input_1[0] * 10 + char_input_1[1];
+        good = true;
         c_i_1++;
       }
       else if (c_i_1 == 2)
       {
         char_input_1[2] = key_value;
         ch_input_1 = char_input_1[0] * 100 + char_input_1[1] * 10 + char_input_1[2];
+        good = true;
         c_i_1++;
       }
       else if (c_i_1 > 2)
       {
+        lv_textarea_add_char(ta, '\n');
         lv_textarea_set_text(ta, " TOO MANY NUMBER");
         lv_textarea_add_char(ta, '\n');
+        good = false;
         c_i_1 = 0;
         ch_input_1 = 0;
       }
@@ -217,24 +234,29 @@ void key(uint8_t key_value)
       {
         char_input_2[0] = key_value;
         ch_input_2 = char_input_2[0];
+        good = true;
         c_i_2++;
       }
       else if (c_i_2 == 1)
       {
         char_input_2[1] = key_value;
         ch_input_2 = char_input_2[0] * 10 + char_input_2[1];
+        good = true;
         c_i_2++;
       }
       else if (c_i_2 == 2)
       {
         char_input_2[2] = key_value;
         ch_input_2 = char_input_2[0] * 100 + char_input_2[1] * 10 + char_input_2[2];
+        good = true;
         c_i_2++;
       }
       else if (c_i_2 > 2)
       {
+        lv_textarea_add_char(ta, '\n');
         lv_textarea_set_text(ta, " TOO MANY NUMBER");
         lv_textarea_add_char(ta, '\n');
+        good = false;
         c_i_2 = 0;
         ch_input_2 = 0;
       }
@@ -246,29 +268,41 @@ void key(uint8_t key_value)
       {
         char_input_3[0] = key_value;
         dim_input_3 = char_input_3[0];
+        good = true;
         d_i_3++;
       }
       else if (d_i_3 == 1)
       {
         char_input_3[1] = key_value;
         dim_input_3 = char_input_3[0] * 10 + char_input_3[1];
+        good = true;
         d_i_3++;
       }
       else if (d_i_3 == 2)
       {
         char_input_3[2] = key_value;
         dim_input_3 = char_input_3[0] * 100 + char_input_3[1] * 10 + char_input_3[2];
+        good = true;
         d_i_3++;
       }
       else if (d_i_3 > 2)
       {
+        lv_textarea_add_char(ta, '\n');
         lv_textarea_set_text(ta, " TOO MANY NUMBER");
         lv_textarea_add_char(ta, '\n');
+        good = false;
         d_i_3 = 0;
         dim_input_3 = 0;
       }
     }
-    lv_textarea_add_text(ta, action);
+    if (good)
+    {
+      lv_textarea_add_text(ta, action);
+    }
+    else
+    {
+      lv_textarea_add_text(ta, " Ch : ");
+    }
   }
 
   //    **  **  ******  **   **    ** ******    **      ** **  **
@@ -282,13 +316,19 @@ void key(uint8_t key_value)
 
   else if ((key_value == 10) || (key_value == 11) || (key_value == 13) || (key_value == 14))
   {
-    if (old_fonction_call == 0 && fonction_call != 2) // plus != AT
+    Serial.println(" else if ((key_value == 10) || (key_value == 11) || (key_value == 13) || (key_value == 14))");
+    Serial.print(" | old_fonction_call : ");
+    Serial.print(old_fonction_call);
+    Serial.print(" | fonction_call : ");
+    Serial.println(fonction_call);
+    // if (old_fonction_call == -1 && fonction_call != 2) // plus != AT
+    if (old_fonction_call == -1 || fonction_call == -1) //
     {
-      Serial.println(" if (old_fonction_call == 0 && fonction_call != 2) ");
+      Serial.println(" if (old_fonction_call == -1)");
       if (ch_input_1 <= 512)
       {
         Serial.println(" +++++++ ch +++++++++ ");
-        select[ch_input_1] = true;
+        selection[ch_input_1] = true;
         c_i_1 = 0;
         ch_input_1 = 0;
       }
@@ -296,17 +336,18 @@ void key(uint8_t key_value)
       {
         lv_textarea_set_text(ta, "1 -> 512 MAX");
         lv_textarea_add_char(ta, '\n');
+        lv_textarea_add_text(ta, " Ch : ");
         c_i_1 = 0;
         ch_input_1 = 0;
       }
     }
-    else if (old_fonction_call == -1) // moins
+    else if (old_fonction_call == -2) // moins
     {
-      Serial.println(" else if (old_fonction_call == -1) ");
+      Serial.println(" else if (old_fonction_call == -2) ");
       if (ch_input_1 <= 512 && ch_input_1 != 0)
       {
         Serial.println(" ------ ch -------- ");
-        select[ch_input_1] = false;
+        selection[ch_input_1] = false;
         c_i_1 = 0;
         ch_input_1 = 0;
       }
@@ -314,25 +355,26 @@ void key(uint8_t key_value)
       {
         lv_textarea_set_text(ta, "1 -> 512 MAX");
         lv_textarea_add_char(ta, '\n');
+        lv_textarea_add_text(ta, " Ch : ");
         c_i_1 = 0;
         ch_input_1 = 0;
       }
     }
-    else if (old_fonction_call == 1) // plus
+    else if (old_fonction_call == 1) // thru
     {
       Serial.println(" ------ Thru -------- ");
       if (ch_input_1 < ch_input_2)
       {
         for (int i = ch_input_1; i <= ch_input_2; i++)
         {
-          select[i] = true;
+          selection[i] = true;
         }
       }
       else if (ch_input_2 < ch_input_1)
       {
         for (int i = ch_input_2; i <= ch_input_1; i++)
         {
-          select[i] = true;
+          selection[i] = true;
         }
       }
       c_i_1 = 0;
@@ -347,14 +389,14 @@ void key(uint8_t key_value)
       {
         for (int i = ch_input_1; i <= ch_input_2; i++)
         {
-          select[i] = false;
+          selection[i] = false;
         }
       }
       else if (ch_input_2 < ch_input_1)
       {
         for (int i = ch_input_2; i <= ch_input_1; i++)
         {
-          select[i] = false;
+          selection[i] = false;
         }
       }
       c_i_1 = 0;
@@ -370,7 +412,7 @@ void key(uint8_t key_value)
       {
         for (int i = 1; i <= 512; i++)
         {
-          if (select[i])
+          if (selection[i])
           {
             output[i] = dim_input_3;
             Serial.print(" output[i] = ");
@@ -382,6 +424,7 @@ void key(uint8_t key_value)
       {
         lv_textarea_set_text(ta, "0 -> 255 MAX");
         lv_textarea_add_char(ta, '\n');
+        lv_textarea_add_text(ta, " Ch : ");
         c_i_1 = 0;
         ch_input_1 = 0;
       }
@@ -393,7 +436,7 @@ void key(uint8_t key_value)
       if (ch_input_1 <= 512)
       {
         Serial.println("  at +++++++ ch *** ");
-        select[ch_input_1] = true;
+        selection[ch_input_1] = true;
         c_i_1 = 0;
         ch_input_1 = 0;
       }
@@ -401,6 +444,7 @@ void key(uint8_t key_value)
       {
         lv_textarea_set_text(ta, "1 -> 512 MAX");
         lv_textarea_add_char(ta, '\n');
+        lv_textarea_add_text(ta, " Ch : ");
         c_i_1 = 0;
         ch_input_1 = 0;
       }
@@ -411,7 +455,7 @@ void key(uint8_t key_value)
       lv_textarea_add_text(ta, " Send Ch : ");
       for (int i = 1; i <= 512; i++)
       {
-        if (select[i])
+        if (selection[i])
         {
           output[i] = 255;
 
@@ -425,8 +469,12 @@ void key(uint8_t key_value)
           }
           lv_textarea_add_text(ta, " + ");
         }
-        select[i] = false;
+
+        // selection[i] = false;
       }
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
       old_fonction_call = 0;
       fonction_call = 0;
       lv_textarea_add_text(ta, " AT Full");
@@ -448,9 +496,9 @@ void key(uint8_t key_value)
     {
       for (int i = 1; i <= 512; i++)
       {
-        select[i] = false;
+        selection[i] = false;
       }
-      lv_textarea_add_text(ta, " Clear I Select ");
+      lv_textarea_add_text(ta, " Clear I selection ");
     }
     else if (clear_time == 1)
     {
@@ -482,7 +530,7 @@ void key(uint8_t key_value)
     {
       if (output[i] > 0)
       {
-        select[i] = true;
+        selection[i] = true;
       }
     }
   }
@@ -496,12 +544,13 @@ void key(uint8_t key_value)
   else if (key_value >= 17 && key_value <= 21) // full zero half -10 +10
   {
     clear_time = 0;
-    if (old_fonction_call == 0 && fonction_call != 2) // plus != AT
+    // if (old_fonction_call == -1 && fonction_call != 2) // plus != AT
+    if (old_fonction_call <= 0) //
     {
       if (ch_input_1 <= 512)
       {
-        Serial.println(" **full zero half** ");
-        select[ch_input_1] = true;
+        Serial.println(" **full zero half** add selection ");
+        selection[ch_input_1] = true;
         c_i_1 = 0;
         ch_input_1 = 0;
       }
@@ -509,25 +558,29 @@ void key(uint8_t key_value)
       {
         lv_textarea_set_text(ta, "1 -> 512 MAX");
         lv_textarea_add_char(ta, '\n');
+        lv_textarea_add_text(ta, " Ch : ");
+
         c_i_1 = 0;
         ch_input_1 = 0;
       }
     }
-    else if (old_fonction_call == 1) // plus
+    else if (old_fonction_call == 1) // Thru
     {
       Serial.println(" **full zero half** ------ Thru -------- ");
       if (ch_input_1 < ch_input_2)
       {
+        Serial.println(" **< ");
         for (int i = ch_input_1; i <= ch_input_2; i++)
         {
-          select[i] = true;
+          selection[i] = true;
         }
       }
       else if (ch_input_2 < ch_input_1)
       {
+        Serial.println(" **>");
         for (int i = ch_input_2; i <= ch_input_1; i++)
         {
-          select[i] = true;
+          selection[i] = true;
         }
       }
       c_i_1 = 0;
@@ -542,14 +595,14 @@ void key(uint8_t key_value)
       {
         for (int i = ch_input_1; i <= ch_input_2; i++)
         {
-          select[i] = false;
+          selection[i] = false;
         }
       }
       else if (ch_input_2 < ch_input_1)
       {
         for (int i = ch_input_2; i <= ch_input_1; i++)
         {
-          select[i] = false;
+          selection[i] = false;
         }
       }
       c_i_1 = 0;
@@ -558,36 +611,41 @@ void key(uint8_t key_value)
       ch_input_2 = 0;
     }
 
-    lv_textarea_add_char(ta, '\n');
     c_i_1 = 0;
     c_i_2 = 0;
     ch_input_1 = 0;
     ch_input_2 = 0;
+    old_fonction_call = fonction_call;
     fonction_call = 0;
-    old_fonction_call = 0;
-    lv_textarea_add_text(ta, " Ch : ");
-    for (int i = 1; i <= 512; i++)
-    {
-      if (select[i])
-      {
-        char ch[3];
-        sprintf(ch, "%d", i);
-        lv_textarea_add_char(ta, ch[0]);
-        if (i > 9)
-        {
-          lv_textarea_add_char(ta, ch[1]);
-          lv_textarea_add_char(ta, ch[2]);
-        }
-        lv_textarea_add_text(ta, " + ");
-      }
-    }
+
+    // lv_textarea_add_char(ta, '\n');
+    // lv_textarea_add_text(ta, " Ch : ");
+    // for (int i = 1; i <= 512; i++)
+    // {
+    //   if (selection[i])
+    //   {
+    //     char ch[3];
+    //     sprintf(ch, "%d", i);
+    //     lv_textarea_add_char(ta, ch[0]);
+    //     if (i > 9)
+    //     {
+    //       lv_textarea_add_char(ta, ch[1]);
+    //       lv_textarea_add_char(ta, ch[2]);
+    //     }
+    //     lv_textarea_add_text(ta, " + ");
+    //   }
+    // }
+    // lv_textarea_del_char(ta);
+    // lv_textarea_del_char(ta);
+    // lv_textarea_del_char(ta);
+    
     if (key_value == 17) // Full
     {
       lv_textarea_add_char(ta, '\n');
       lv_textarea_add_text(ta, " Send Ch : ");
       for (int i = 1; i <= 512; i++)
       {
-        if (select[i])
+        if (selection[i])
         {
           output[i] = 255;
 
@@ -601,8 +659,11 @@ void key(uint8_t key_value)
           }
           lv_textarea_add_text(ta, " + ");
         }
-        select[i] = false;
+        // selection[i] = false;
       }
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
       lv_textarea_add_text(ta, " AT Full");
       copyDMXToOutput();
     }
@@ -612,7 +673,7 @@ void key(uint8_t key_value)
       lv_textarea_add_text(ta, " Send Ch : ");
       for (int i = 1; i <= 512; i++)
       {
-        if (select[i])
+        if (selection[i])
         {
           output[i] = 0;
 
@@ -626,8 +687,11 @@ void key(uint8_t key_value)
           }
           lv_textarea_add_text(ta, " + ");
         }
-        select[i] = false;
+        // selection[i] = false;
       }
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
       lv_textarea_add_text(ta, " AT Zero");
       copyDMXToOutput();
     }
@@ -637,7 +701,7 @@ void key(uint8_t key_value)
       lv_textarea_add_text(ta, " Send Ch : ");
       for (int i = 1; i <= 512; i++)
       {
-        if (select[i])
+        if (selection[i])
         {
           output[i] = 127;
 
@@ -651,8 +715,11 @@ void key(uint8_t key_value)
           }
           lv_textarea_add_text(ta, " + ");
         }
-        select[i] = false;
+        // selection[i] = false;
       }
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
       lv_textarea_add_text(ta, " AT 127");
       copyDMXToOutput();
     }
@@ -662,7 +729,7 @@ void key(uint8_t key_value)
       lv_textarea_add_text(ta, " Send Ch : ");
       for (int i = 1; i <= 512; i++)
       {
-        if (select[i])
+        if (selection[i])
         {
           output[i] = output[i] - 10;
           if (output[i] < 0)
@@ -680,6 +747,9 @@ void key(uint8_t key_value)
           lv_textarea_add_text(ta, " + ");
         }
       }
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
       lv_textarea_add_text(ta, " AT -10");
       copyDMXToOutput();
     }
@@ -689,7 +759,7 @@ void key(uint8_t key_value)
       lv_textarea_add_text(ta, " Send Ch : ");
       for (int i = 1; i <= 512; i++)
       {
-        if (select[i])
+        if (selection[i])
         {
           output[i] = output[i] + 10;
           if (output[i] > 255)
@@ -707,6 +777,9 @@ void key(uint8_t key_value)
           lv_textarea_add_text(ta, " + ");
         }
       }
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
+      lv_textarea_del_char(ta);
       lv_textarea_add_text(ta, " AT +10");
       copyDMXToOutput();
     }
@@ -733,7 +806,7 @@ void key(uint8_t key_value)
     lv_textarea_add_text(ta, " Ch : ");
     for (int i = 1; i <= 512; i++)
     {
-      if (select[i])
+      if (selection[i])
       {
         char ch[3];
         sprintf(ch, "%d", i);
@@ -746,6 +819,9 @@ void key(uint8_t key_value)
         lv_textarea_add_text(ta, " + ");
       }
     }
+    lv_textarea_del_char(ta);
+    lv_textarea_del_char(ta);
+    lv_textarea_del_char(ta);
   }
   else if (fonction_call == 5) // Please to At
   {
@@ -760,7 +836,7 @@ void key(uint8_t key_value)
     lv_textarea_add_text(ta, " Send Ch : ");
     for (int i = 1; i <= 512; i++)
     {
-      if (select[i])
+      if (selection[i])
       {
         output[i] = dim_input_3;
 
@@ -774,8 +850,11 @@ void key(uint8_t key_value)
         }
         lv_textarea_add_text(ta, " + ");
       }
-      select[i] = false;
+      // selection[i] = false;
     }
+    lv_textarea_del_char(ta);
+    lv_textarea_del_char(ta);
+    lv_textarea_del_char(ta);
     lv_textarea_add_text(ta, " AT ");
     char dim[3];
     sprintf(dim, "%d", dim_input_3);
@@ -811,7 +890,7 @@ void key(uint8_t key_value)
   Serial.println(fonction_call);
   for (int i = 1; i <= 512; i++)
   {
-    if (select[i])
+    if (selection[i])
     {
       Serial.print(" + CH : ");
       Serial.print(i);
@@ -845,11 +924,11 @@ void copyDMXToOutput(void)
   xSemaphoreGive(ESP32DMX1.lxDataLock);
 }
 
-//   ****  **  ** ****** *****  **  ** ******   ****** ****** **     **     
-//  **  ** **  **   **   **  ** **  **   **     **     **  ** **     **     
-//  **  ** **  **   **   *****  **  **   **     **     ****** **     **     
-//  **  ** **  **   **   **     **  **   **     **     **  ** **     **     
-//   ****   ****    **   **      ****    **     ****** **  ** ****** ****** 
+//   ****  **  ** ****** *****  **  ** ******   ****** ****** **     **
+//  **  ** **  **   **   **  ** **  **   **     **     **  ** **     **
+//  **  ** **  **   **   *****  **  **   **     **     ****** **     **
+//  **  ** **  **   **   **     **  **   **     **     **  ** **     **
+//   ****   ****    **   **      ****    **     ****** **  ** ****** ******
 
 void output_call()
 {
